@@ -10,7 +10,7 @@ import { Student } from "../models/student.model"
 export class MajorService {
   constructor(private http: HttpClient) {}
 
-  private majorUrl = "http://localhost:8080/majors"
+  private majorUrl = "http://localhost:8085/majors"
 
   findAll(): Observable<Major[]> {
     return this.http.get<Major[]>(this.majorUrl)
