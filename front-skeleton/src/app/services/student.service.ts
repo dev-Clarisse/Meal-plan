@@ -10,7 +10,7 @@ import { HttpClient } from "@angular/common/http"
 export class StudentService {
   constructor(private http: HttpClient) {}
 
-  private studentsUrl = "http://localhost:8080/students"
+  private studentsUrl = "http://localhost:8085/students"
 
   findAll(): Observable<Student[]> {
     return this.http.get<Student[]>(this.studentsUrl)
