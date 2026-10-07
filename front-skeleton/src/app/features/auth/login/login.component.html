@@ -1,0 +1,66 @@
+<div class="login-page d-flex align-items-center justify-content-center p-3">
+  <div class="card login-card shadow-lg border-0">
+    <div class="login-header text-center p-4">
+      <div class="logo mb-2">🥗</div>
+      <h1 class="h3 fw-bold mb-0">Meal Planner</h1>
+      <p class="mb-0 small">Planifie tes repas, simplifie ta semaine</p>
+    </div>
+
+    <div class="card-body p-4">
+      <h2 class="h5 fw-semibold text-mp-green mb-3">Connexion</h2>
+
+      <div *ngIf="errorMessage" class="alert alert-danger py-2" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control form-control-lg"
+            formControlName="email"
+            placeholder="vous@exemple.com"
+            autocomplete="username"
+            [class.is-invalid]="email.invalid && email.touched"
+          />
+          <div class="invalid-feedback">Entre un email valide.</div>
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="form-label">Mot de passe</label>
+          <div class="input-group">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control form-control-lg"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              [class.is-invalid]="password.invalid && password.touched"
+            />
+            <button
+              type="button"
+              class="btn btn-outline-mp"
+              (click)="showPassword = !showPassword"
+              [attr.aria-label]="showPassword ? 'Masquer' : 'Afficher'"
+            >
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+            <div class="invalid-feedback">Mot de passe requis.</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-mp btn-lg w-100" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+          {{ loading ? 'Connexion…' : 'Se connecter' }}
+        </button>
+      </form>
+
+      <p class="text-center small mt-3 mb-0">
+        Pas encore de compte ? <a routerLink="/register" class="fw-semibold">S'inscrire</a>
+      </p>
+    </div>
+  </div>
+</div>

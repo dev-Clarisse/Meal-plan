@@ -1,0 +1,22 @@
+.login-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 20%, var(--mp-yellow-light) 0, transparent 45%),
+    radial-gradient(circle at 85% 80%, var(--mp-green-light) 0, transparent 45%),
+    var(--mp-cream);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+.login-header {
+  background: linear-gradient(135deg, var(--mp-green) 0%, var(--mp-green-dark) 100%);
+  color: #fff;
+  border-bottom: 5px solid var(--mp-yellow);
+
+  .logo { font-size: 2.5rem; line-height: 1; }
+}

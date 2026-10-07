@@ -1,26 +1,31 @@
-@use "theme";
-@import "./bootstrap/_bootstrap";
+@import 'theme';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
-/* You can add global styles to this file, and also import other style files */
+html, body { height: 100%; }
+body { margin: 0; }
 
-html, body { height: 100%;}
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// Bouton principal : jaune avec texte vert foncé (contraste)
+.btn-mp {
+  background: var(--mp-yellow);
+  border: 2px solid var(--mp-yellow);
+  color: var(--mp-green-dark);
+  font-weight: 600;
+  transition: all .2s ease;
 
-.mat-mini-fab {
-  color : theme.$white !important;
-}
-
-.mat-raised-button {
-  color : theme.$white !important;
-}
-
-table {
-  font-size: medium;
-  tr {
-    height: 57px;
-    td {
-      vertical-align: middle;
-    }
+  &:hover:not(:disabled) {
+    background: var(--mp-yellow-dark);
+    border-color: var(--mp-yellow-dark);
+    color: var(--mp-green-dark);
+    transform: translateY(-1px);
   }
-
 }
+
+.btn-outline-mp {
+  border: 2px solid var(--mp-green);
+  color: var(--mp-green);
+  &:hover { background: var(--mp-green); color: #fff; }
+}
+
+.text-mp-green { color: var(--mp-green) !important; }
+.bg-mp-green   { background: var(--mp-green) !important; }
+.bg-mp-yellow  { background: var(--mp-yellow) !important; }
