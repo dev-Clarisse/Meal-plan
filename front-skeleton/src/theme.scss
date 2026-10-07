@@ -1,54 +1,43 @@
-@use "@angular/material" as mat;
-@include mat.core();
+// ===== Palette Meal Planner : jaune / vert / blanc =====
+$green:        #5b8c3a;   // vert feuille
+$green-dark:   #3f6b24;
+$green-light:  #e6f0dc;
+$yellow:       #f4c430;   // jaune citron / maïs
+$yellow-dark:  #d9a90f;
+$yellow-light: #fff6d6;
+$cream:        #fffdf5;   // blanc cassé
 
-$dark-purple-palette: (
-  50: #6a0f59,
-  100: #7d1269,
-  200: #74107f,
-  300: #580c61,
-  400: #5d0d82,
-  500: #4a0a67,
-  600: #43095d,
-  700: #35074a,
-  800: #290539,
-  900: #1b0325,
-  contrast: (
-    A50: #eac7f9,
-  ),
-);
-$red-purple-palette: (
-  50: #b71c32,
-  100: #b01c32,
-  200: #c31d47,
-  300: #a5193d,
-  400: #b11b52,
-  500: #961644,
-  600: #a01860,
-  700: #82134e,
-  800: #8d1667,
-  900: #751255,
-  contrast: (
-    A50: #961644,
-  ),
-);
+// ===== Surcharge des variables Bootstrap (avant l'import) =====
+$primary:   $green;
+$secondary: $yellow;
+$success:   $green;
+$warning:   $yellow;
+$light:     $cream;
+$dark:      #2b3a1f;
 
-$my-primary: mat.define-palette($dark-purple-palette, 500, 50, 900);
-$my-accent: mat.define-palette($red-purple-palette, 500, 50, 900);
-$my-warn: mat.define-palette(mat.$red-palette);
+$body-bg:    $cream;
+$body-color: #2b3a1f;
+$link-color: $green-dark;
+$link-hover-color: $green;
 
-$my-theme: mat.define-light-theme(
-  (
-    color: (
-      primary: $my-primary,
-      accent: $my-accent,
-      warn: $my-warn,
-    ),
-  )
-);
+$font-family-sans-serif: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+$border-radius:    .65rem;
+$border-radius-lg: 1rem;
+$btn-border-radius: 2rem;
+$input-focus-border-color: $green;
+$input-focus-box-shadow: 0 0 0 .25rem rgba($green, .25);
+$input-border-color: lighten($green, 30%);
 
-@include mat.all-component-colors($my-theme);
+// ===== Import de Bootstrap =====
+@import 'bootstrap/scss/bootstrap';
 
-$common-purple: mat.get-color-from-palette($dark-purple-palette, 500);
-$common-red: mat.get-color-from-palette(mat.$red-palette, A700);
-$warn: mat.get-color-from-palette($my-warn, 400);
-$white: #ffffff;
+// ===== Variables CSS réutilisables dans les composants =====
+:root {
+  --mp-green: #{$green};
+  --mp-green-dark: #{$green-dark};
+  --mp-green-light: #{$green-light};
+  --mp-yellow: #{$yellow};
+  --mp-yellow-dark: #{$yellow-dark};
+  --mp-yellow-light: #{$yellow-light};
+  --mp-cream: #{$cream};
+}
