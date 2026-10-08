@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.takima.backskeleton.User.models.User;
 import com.takima.backskeleton.User.models.Role;
 
+
 import java.util.Optional;
 import java.util.UUID;
  
@@ -14,6 +15,7 @@ import java.util.UUID;
  * (protection contre l'injection SQL). Pas de concaténation de SQL.
  * Les emails sont stockés en minuscules.
  */
+
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
  

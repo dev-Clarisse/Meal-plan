@@ -17,7 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
-
+import com.takima.backskeleton.User.DAO.UserRepository;
 import com.takima.backskeleton.Auth.AuthService.AuthService;
 import com.takima.backskeleton.Auth.LoginRequest;
 import com.takima.backskeleton.Auth.TokenResponse;
@@ -38,6 +38,9 @@ class AuthControllerTest {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("POST /api/auth/login valide : 200 et JSON {accessToken, tokenType, expiresIn}")
