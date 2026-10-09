@@ -1,0 +1,44 @@
+<div class="container py-4">
+
+  <!-- Barre du haut : notification bell + déconnexion -->
+  <div class="d-flex justify-content-end align-items-center gap-3 mb-4">
+    <app-notification-bell />
+    <button class="btn btn-outline-mp btn-sm" (click)="logout()">Se déconnecter</button>
+  </div>
+
+  <!-- En-tête utilisateur -->
+  @if (user(); as u) {
+    <div class="card mp-card mb-4">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="avatar-circle">{{ u.email.charAt(0).toUpperCase() }}</div>
+        <div>
+          <h1 class="h4 mb-0 text-mp-green">Bienvenue 🥗</h1>
+          <small class="text-muted">{{ u.email }}</small>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Actions principales -->
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card mp-card h-100">
+        <div class="card-body">
+          <h2 class="h5 text-mp-green">📅 Mon planning repas</h2>
+          <p class="text-muted">Visualise et organise tes repas de la semaine.</p>
+          <button class="btn btn-mp" disabled>Bientôt disponible</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card mp-card h-100">
+        <div class="card-body">
+          <h2 class="h5 text-mp-green">🧊 Mon frigo</h2>
+          <p class="text-muted">Gère ton inventaire et reçois des alertes de péremption.</p>
+          <a class="btn btn-mp" routerLink="/inventory">Ouvrir l'inventaire</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

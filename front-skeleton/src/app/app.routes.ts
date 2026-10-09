@@ -23,6 +23,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/home/home.component').then((m) => m.HomeComponent),
   },
+  {
+    path: 'inventory',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/inventory/inventory.component').then((m) => m.InventoryComponent),
+  },
 
+  // --- Wildcard EN DERNIER ---
   { path: '**', redirectTo: 'login' },
 ];

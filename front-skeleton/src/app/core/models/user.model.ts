@@ -17,5 +17,8 @@ export interface UserCreateRequest {
   consent: boolean;
 }
 
-// UserUpdateRequest : je n'ai pas ce DTO, à compléter
-export type UserUpdateRequest = Record<string, unknown>;
+export interface UserUpdateRequest {
+  currentPassword: string;
+  email?: string;
+  newPassword?: string;
+}
