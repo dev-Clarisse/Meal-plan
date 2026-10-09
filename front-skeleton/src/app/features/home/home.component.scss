@@ -1,0 +1,32 @@
+.mp-card {
+  border: 1px solid var(--mp-green-light);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(91, 140, 58, .08);
+  background: white;
+}
+
+.btn-mp {
+  background: var(--mp-green);
+  color: white;
+  border-radius: 2rem;
+  padding: .5rem 1.25rem;
+  &:hover { background: var(--mp-green-dark); color: white; }
+}
+
+.btn-outline-mp {
+  border: 1px solid var(--mp-green);
+  color: var(--mp-green);
+  border-radius: 2rem;
+  &:hover { background: var(--mp-green); color: white; }
+}
+
+.text-mp-green { color: var(--mp-green); }
+
+.avatar-circle {
+  width: 56px; height: 56px;
+  background: var(--mp-yellow);
+  color: var(--mp-green-dark);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1.4rem;
+}

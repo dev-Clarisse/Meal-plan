@@ -1,0 +1,73 @@
+<div class="container py-4">
+  <h1 class="h3 text-mp-green mb-4">🧊 Mon inventaire</h1>
+
+  <!-- Formulaire -->
+  <div class="card mp-card mb-4">
+    <div class="card-body">
+      <h2 class="h6 mb-3">{{ editingId() ? 'Modifier' : 'Ajouter' }} un article</h2>
+      <form (ngSubmit)="submit()" #f="ngForm" class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Nom</label>
+          <input class="form-control" name="name" [(ngModel)]="form.name" required maxlength="120">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Quantité</label>
+          <input type="number" step="0.001" min="0.001" class="form-control"
+                 name="quantity" [(ngModel)]="form.quantity" required>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Unité</label>
+          <select class="form-select" name="unit" [(ngModel)]="form.unit">
+            @for (u of units; track u) {
+              <option [value]="u">{{ u }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Date de péremption</label>
+          <input type="date" class="form-control" name="expiryDate" [(ngModel)]="form.expiryDate">
+        </div>
+        <div class="col-md-2 d-flex align-items-end gap-2">
+          <button class="btn btn-mp" type="submit" [disabled]="!f.valid">
+            {{ editingId() ? 'Modifier' : 'Ajouter' }}
+          </button>
+          @if (editingId()) {
+            <button type="button" class="btn btn-outline-mp" (click)="resetForm()">Annuler</button>
+          }
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Liste -->
+  @if (loading()) {
+    <p>Chargement…</p>
+  } @else if (items().length === 0) {
+    <p class="text-muted">Aucun article dans ton frigo.</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="table align-middle mp-table">
+        <thead>
+          <tr>
+            <th>Nom</th><th>Quantité</th><th>Unité</th><th>Péremption</th><th>Statut</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track item.id) {
+            <tr>
+              <td>{{ item.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.unit }}</td>
+              <td>{{ item.expiryDate || '—' }}</td>
+              <td><span class="badge-status" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) }}</span></td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-mp me-1" (click)="edit(item)">✏️</button>
+                <button class="btn btn-sm btn-outline-danger" (click)="remove(item.id)">🗑️</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
