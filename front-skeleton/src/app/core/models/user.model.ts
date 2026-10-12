@@ -1,16 +1,14 @@
-// Correspond au record Java UserResponse
-export type Role = 'USER' | 'ADMIN'; // à ajuster selon ton enum Role
+export type Role = 'USER' | 'ADMIN'; 
 
 export interface User {
   id: string;
   email: string;
   role: Role;
-  consentGivenAt: string; // Instant ISO-8601
+  consentGivenAt: string; 
   createdAt: string;
   updatedAt: string;
 }
 
-// Correspond au record Java UserCreateRequest
 export interface UserCreateRequest {
   email: string;
   password: string;

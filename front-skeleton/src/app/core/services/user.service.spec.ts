@@ -12,8 +12,6 @@ describe('UserService', () => {
   let httpMock: HttpTestingController;
 
   const baseUrl = `${environment.apiUrl}/users`;
-
-  // --- Mock aligné sur UserResponse (jamais de passwordHash côté client) ---
   const mockUser: User = {
     id: 'uuid-123',
     email: 'user@test.com',
@@ -30,7 +28,6 @@ describe('UserService', () => {
     role: 'ADMIN',
   };
 
-  // Mot de passe valide (≥ 12 caractères, ≤ 72)
   const validPassword = 'MyS3cur3P@ssword2026';
   const newValidPassword = 'An0therS3cur3P@ss2026';
 
@@ -54,8 +51,6 @@ describe('UserService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
-
-  // ---------- register ----------
 
   it('register() should POST to /api/users with the payload', () => {
     const payload: UserCreateRequest = {
@@ -172,8 +167,6 @@ describe('UserService', () => {
     expect(errorCaught.status).toBe(409);
   });
 
-  // ---------- getMe ----------
-
   it('getMe() should GET /api/users/me', () => {
     service.getMe().subscribe(user => {
       expect(user).toEqual(mockUser);
@@ -215,8 +208,6 @@ describe('UserService', () => {
 
     httpMock.expectOne(`${baseUrl}/me`).flush(mockAdmin);
   });
-
-  // ---------- updateMe ----------
 
   it('updateMe() should PUT to /api/users/me (email only)', () => {
     const payload: UserUpdateRequest = {
@@ -347,8 +338,6 @@ describe('UserService', () => {
     expect(errorCaught.status).toBe(401);
   });
 
-  // ---------- deleteMe ----------
-
   it('deleteMe() should DELETE /api/users/me', () => {
     let completed = false;
 
@@ -389,7 +378,6 @@ describe('UserService', () => {
     expect(errorCaught.status).toBe(401);
   });
 
-  // ---------- exportMe ----------
 
   it('exportMe() should GET /api/users/me/export', () => {
     service.exportMe().subscribe(user => {
@@ -416,34 +404,34 @@ describe('UserService', () => {
     expect(errorCaught.status).toBe(401);
   });
 
-  // ---------- vérification globale des endpoints ----------
+
 
   it('should use the correct endpoint and method for every operation', () => {
-    // register
+    
     service.register({ email: 'a@b.com', password: validPassword, consent: true }).subscribe();
     const req1 = httpMock.expectOne(baseUrl);
     expect(req1.request.method).toBe('POST');
     req1.flush(mockUser);
 
-    // getMe
+  
     service.getMe().subscribe();
     const req2 = httpMock.expectOne(`${baseUrl}/me`);
     expect(req2.request.method).toBe('GET');
     req2.flush(mockUser);
 
-    // updateMe
+   
     service.updateMe({ currentPassword: validPassword, email: 'new@test.com' }).subscribe();
     const req3 = httpMock.expectOne(`${baseUrl}/me`);
     expect(req3.request.method).toBe('PUT');
     req3.flush(mockUser);
 
-    // deleteMe
+   
     service.deleteMe().subscribe();
     const req4 = httpMock.expectOne(`${baseUrl}/me`);
     expect(req4.request.method).toBe('DELETE');
     req4.flush(null);
 
-    // exportMe
+  
     service.exportMe().subscribe();
     const req5 = httpMock.expectOne(`${baseUrl}/me/export`);
     expect(req5.request.method).toBe('GET');

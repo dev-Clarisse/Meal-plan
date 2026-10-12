@@ -25,7 +25,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,7 +89,7 @@ class ExpirationAlertSchedulerTest {
         when(inventoryRepo.findAllByExpiryDateLessThanEqual(any(LocalDate.class)))
             .thenReturn(List.of(item));
         when(notifRepo.existsByInventoryIdAndType(item.getId(), NotificationType.EXPIRING_SOON))
-            .thenReturn(true);   // déjà notifié → anti-doublon
+            .thenReturn(true);  
 
         scheduler.runDailyAlerts();
 
@@ -109,7 +108,6 @@ class ExpirationAlertSchedulerTest {
         verify(notifRepo, never()).save(any());
     }
 
-    // ---------- helpers ----------
 
     private Inventory inventory(String name, LocalDate expiry) {
         Inventory i = new Inventory(user, name, BigDecimal.ONE, Unit.PIECE, expiry);

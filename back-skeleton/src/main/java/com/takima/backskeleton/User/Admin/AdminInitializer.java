@@ -15,11 +15,6 @@ import com.takima.backskeleton.User.models.Role;
 import java.time.Instant;
 import java.util.Locale;
 
-/**
- * Crée le premier administrateur au démarrage si aucun n'existe et si
- * app.admin.email / app.admin.password sont fournis (variables d'environnement).
- * Retirez ces variables une fois l'admin créé.
- */
 @Component
 public class AdminInitializer implements ApplicationRunner {
 

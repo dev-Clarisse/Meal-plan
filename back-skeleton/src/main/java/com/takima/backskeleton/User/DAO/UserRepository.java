@@ -10,11 +10,6 @@ import com.takima.backskeleton.User.models.Role;
 import java.util.Optional;
 import java.util.UUID;
  
-/**
- * DAO. Les requêtes dérivées de Spring Data sont paramétrées
- * (protection contre l'injection SQL). Pas de concaténation de SQL.
- * Les emails sont stockés en minuscules.
- */
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {

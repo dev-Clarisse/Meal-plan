@@ -62,7 +62,6 @@ public class InventoryService {
         repo.delete(inv);
     }
 
-    // --- Helpers ---
 
     private UUID currentUserId(String email) {
         return userRepo.findByEmail(email)

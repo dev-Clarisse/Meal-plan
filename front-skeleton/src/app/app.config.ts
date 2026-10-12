@@ -10,8 +10,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withInterceptors([
-        jsonContentTypeInterceptor,   // 1. pose le Content-Type d'abord
-        authInterceptor,               // 2. ajoute l'Authorization + gère le 401
+        jsonContentTypeInterceptor,   
+        authInterceptor,               
       ]),
     ),
   ],

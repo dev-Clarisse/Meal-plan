@@ -10,11 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.takima.backskeleton.User.models.User;
 
-
 import java.util.List;
 import java.util.Locale;
 
-/** Utilisé uniquement par le login (vérification email / mot de passe). */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 

@@ -14,6 +14,5 @@ public interface InventoryRepository extends JpaRepository<Inventory, UUID> {
 
     Optional<Inventory> findByIdAndUserId(UUID id, UUID userId);
 
-    // Pour le scheduler : tous les items avec une date d'expiration <= seuil
     List<Inventory> findAllByExpiryDateLessThanEqual(LocalDate threshold);
 }

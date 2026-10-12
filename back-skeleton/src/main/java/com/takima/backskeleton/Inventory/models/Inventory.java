@@ -23,7 +23,6 @@ public class Inventory {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    // Propriétaire : accès limité à ses propres données
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -38,7 +37,6 @@ public class Inventory {
     @Column(name = "unit", nullable = false, length = 20)
     private Unit unit;
 
-    // Date de validité (nullable = pas de date de péremption)
     @Column(name = "expiry_date")
     private LocalDate expiryDate;
 
@@ -73,7 +71,6 @@ public class Inventory {
         this.updatedAt = Instant.now();
     }
 
-    // Getters / setters
     public UUID getId() { return id; }
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }

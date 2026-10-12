@@ -4,7 +4,6 @@ import { authGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
 
-  // --- Authentification (public) ---
   {
     path: 'login',
     loadComponent: () =>
@@ -16,7 +15,6 @@ export const routes: Routes = [
       import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
   },
 
-  // --- Pages protégées ---
   {
     path: 'home',
     canActivate: [authGuard],
@@ -30,6 +28,5 @@ export const routes: Routes = [
       import('./features/inventory/inventory.component').then((m) => m.InventoryComponent),
   },
 
-  // --- Wildcard EN DERNIER ---
   { path: '**', redirectTo: 'login' },
 ];

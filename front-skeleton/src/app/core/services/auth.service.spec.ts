@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { AuthService } from './auth.service';
 import { TokenResponse } from '../models/auth.model';
 
-// Mêmes clés que dans auth.service.ts
+
 const TOKEN_KEY = 'mp_token';
 const EXPIRES_KEY = 'mp_token_expires_at';
 
@@ -12,16 +12,15 @@ describe('AuthService', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
-    sessionStorage.clear(); // chaque test repart d'un navigateur "vide"
+    sessionStorage.clear(); 
     TestBed.configureTestingModule({
-      // HttpClient "de test" : aucune vraie requête réseau n'est envoyée
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
     httpMock = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
-    httpMock.verify(); // échoue si une requête inattendue est restée en suspens
+    httpMock.verify(); 
     sessionStorage.clear();
   });
 
@@ -37,7 +36,7 @@ describe('AuthService', () => {
     const req = httpMock.expectOne('/api/auth/login');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual({ email: 'clarisse@mail.com', password: 'motdepasse-12345' });
-    req.flush(response); // simule la réponse du back
+    req.flush(response); 
 
     expect(sessionStorage.getItem(TOKEN_KEY)).toBe('jwt-factice');
     expect(Number(sessionStorage.getItem(EXPIRES_KEY))).toBeGreaterThanOrEqual(before + 900 * 1000);

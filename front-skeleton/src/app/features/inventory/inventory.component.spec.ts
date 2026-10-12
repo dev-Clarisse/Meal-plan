@@ -65,7 +65,7 @@ describe('InventoryComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // ---------- Chargement initial ----------
+ 
 
   it('should load items on init', () => {
     expect(inventoryServiceSpy.list).toHaveBeenCalledTimes(1);
@@ -80,7 +80,6 @@ describe('InventoryComponent', () => {
     expect(component.loading()).toBeFalse();
   });
 
-  // ---------- Affichage ----------
 
   it('should render one row per item', () => {
     const rows = fixture.nativeElement.querySelectorAll('tbody tr');
@@ -101,7 +100,6 @@ describe('InventoryComponent', () => {
     expect(compiled.textContent).toContain('Aucun article');
   });
 
-  // ---------- Création ----------
 
   it('should create an item when form is submitted', () => {
     inventoryServiceSpy.create.and.returnValue(of(mockItems[0]));
@@ -143,7 +141,6 @@ describe('InventoryComponent', () => {
     expect(component.editingId()).toBeNull();
   });
 
-  // ---------- Édition ----------
 
   it('should populate form when editing', () => {
     component.edit(mockItems[1]);
@@ -178,7 +175,6 @@ describe('InventoryComponent', () => {
     expect(component.form.name).toBe('');
   });
 
-  // ---------- Suppression ----------
 
   it('should delete an item after confirmation', () => {
     spyOn(window, 'confirm').and.returnValue(true);
@@ -198,7 +194,6 @@ describe('InventoryComponent', () => {
     expect(inventoryServiceSpy.delete).not.toHaveBeenCalled();
   });
 
-  // ---------- Statut / badge ----------
 
   it('should return correct CSS class for each status', () => {
     expect(component.statusClass('EXPIRED')).toBe('badge-expired');

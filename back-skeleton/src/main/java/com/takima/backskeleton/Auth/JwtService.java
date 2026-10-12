@@ -13,11 +13,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 
-/**
- * Génère des access tokens courts. Le token ne contient AUCUNE donnée personnelle :
- * uniquement l'UUID de l'utilisateur (sub), l'émetteur et les dates (minimisation RGPD).
- * Le rôle n'est volontairement pas dans le token : il est relu en base à chaque requête.
- */
 @Service
 public class JwtService {
 

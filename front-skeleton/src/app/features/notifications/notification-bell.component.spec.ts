@@ -55,7 +55,7 @@ describe('NotificationBellComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // ---------- Chargement initial ----------
+  
 
   it('should load notifications and unread count on init', () => {
     expect(notifServiceSpy.list).toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe('NotificationBellComponent', () => {
     expect(badge).toBeFalsy();
   });
 
-  // ---------- Ouverture / fermeture ----------
+ 
 
   it('should start with the panel closed', () => {
     expect(component.open()).toBeFalse();
@@ -103,7 +103,7 @@ describe('NotificationBellComponent', () => {
     expect(component.open()).toBeFalse();
   });
 
-  // ---------- Affichage des notifications ----------
+  
 
   it('should display all notifications when open', () => {
     component.toggle();
@@ -132,7 +132,7 @@ describe('NotificationBellComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Aucune notification');
   });
 
-  // ---------- Actions ----------
+ 
 
   it('should mark a notification as read on click', () => {
     component.markRead(mockNotifs[0]);
@@ -170,10 +170,10 @@ describe('NotificationBellComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Tout lire');
   });
 
-  // ---------- Polling ----------
+  
 
   it('should refresh notifications periodically', fakeAsync(() => {
-    // Recrée le composant dans la zone fakeAsync pour capturer le setInterval
+    
     const newFixture = TestBed.createComponent(NotificationBellComponent);
     newFixture.detectChanges();
 
@@ -185,7 +185,7 @@ describe('NotificationBellComponent', () => {
     expect(notifServiceSpy.list).toHaveBeenCalled();
     expect(notifServiceSpy.unreadCount).toHaveBeenCalled();
 
-    // Nettoie le setInterval pour éviter les fuites entre tests
+   
     newFixture.destroy();
     discardPeriodicTasks();
   }));

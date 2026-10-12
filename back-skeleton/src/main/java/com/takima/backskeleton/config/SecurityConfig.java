@@ -27,7 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
  
 @Configuration
-@EnableMethodSecurity // active @PreAuthorize
+@EnableMethodSecurity 
 public class SecurityConfig {
  
     @Bean
@@ -40,7 +40,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
  
-    /** Clé HS256 : secret Base64 d'au moins 256 bits, fourni par variable d'environnement. */
+
     @Bean
     public SecretKey jwtSecretKey(@Value("${app.jwt.secret}") String base64Secret) {
         byte[] bytes = Base64.getDecoder().decode(base64Secret);
@@ -59,9 +59,8 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder(SecretKey jwtSecretKey, @Value("${app.jwt.issuer}") String issuer) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtSecretKey)
-            .macAlgorithm(MacAlgorithm.HS256) // algorithme imposé : refuse "none" et les autres
+            .macAlgorithm(MacAlgorithm.HS256) 
             .build();
-        // Vérifie la signature, l'expiration ET l'émetteur
         decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(issuer));
         return decoder;
     }
@@ -70,7 +69,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            UserJwtAuthenticationConverter jwtConverter) throws Exception {
         http
-            // API stateless avec Bearer token (pas de cookie) : CSRF inutile
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth

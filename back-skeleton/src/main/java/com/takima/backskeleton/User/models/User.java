@@ -1,21 +1,11 @@
 package com.takima.backskeleton.User.models;
 
-
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
  
-/**
- * Entité utilisateur.
- * - UUID : identifiant non devinable (évite l'énumération / IDOR)
- * - Contrainte d'unicité sur l'email (garantie par la base)
- * - Mot de passe stocké uniquement sous forme de hash
- * - Rôle USER / ADMIN : jamais fourni par le client à l'inscription
- * - @Version : verrouillage optimiste
- * - Champs RGPD : date de consentement, dates de création / modification
- */
 @Entity
 @Table(
     name = "users",
@@ -31,7 +21,7 @@ public class User {
     @Column(name = "email", nullable = false, length = 254)
     private String email;
  
-    // Hash BCrypt = 60 caractères
+   
     @Column(name = "password_hash", nullable = false, length = 72)
     private String passwordHash;
  
@@ -39,7 +29,6 @@ public class User {
     @Column(name = "role", nullable = false, length = 20)
     private Role role = Role.USER;
  
-    // Preuve du consentement (RGPD art. 7)
     @Column(name = "consent_given_at", nullable = false, updatable = false)
     private Instant consentGivenAt;
  
@@ -53,7 +42,6 @@ public class User {
     private Long version;
  
     protected User() {
-        // requis par JPA
     }
  
     public User(String email, String passwordHash, Instant consentGivenAt) {
@@ -105,7 +93,6 @@ public class User {
         return getClass().hashCode();
     }
  
-    // Jamais de mot de passe ni d'email dans toString (fuite via les logs)
     @Override
     public String toString() {
         return "User{id=" + id + "}";

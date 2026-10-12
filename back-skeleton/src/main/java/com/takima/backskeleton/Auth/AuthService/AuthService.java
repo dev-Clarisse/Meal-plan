@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.takima.backskeleton.Auth.JwtService;
 import com.takima.backskeleton.User.DAO.UserRepository;
 import com.takima.backskeleton.User.models.User;
@@ -38,8 +37,6 @@ public class AuthService {
         String email = request.email().trim().toLowerCase(Locale.ROOT);
 
         try {
-            // DaoAuthenticationProvider : compare le hash BCrypt, y compris pour un email
-            // inconnu (atténue l'énumération par temps de réponse)
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, request.password()));
         } catch (AuthenticationException e) {
@@ -52,7 +49,6 @@ public class AuthService {
         return new TokenResponse(jwtService.generate(user), "Bearer", jwtService.ttlSeconds());
     }
 
-    // Même message quel que soit le motif (email inconnu / mot de passe faux)
     private static ResponseStatusException invalidCredentials() {
         return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Identifiants invalides");
     }

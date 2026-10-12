@@ -14,11 +14,6 @@ import com.takima.backskeleton.User.DTO.RoleUpdateRequest;
 
 import java.util.UUID;
 
-/**
- * Réservé aux ADMIN. Double protection :
- *  1. SecurityConfig : requestMatchers("/api/admin/**").hasRole("ADMIN")
- *  2. @PreAuthorize (défense en profondeur si la config d'URL est modifiée par erreur)
- */
 @RestController
 @RequestMapping("/api/admin/users")
 @PreAuthorize("hasRole('ADMIN')")

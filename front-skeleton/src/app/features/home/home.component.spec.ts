@@ -38,7 +38,7 @@ describe('HomeComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
       providers: [
-        provideRouter([]),                                // fournit le VRAI Router + ActivatedRoute
+        provideRouter([]),                             
         { provide: AuthService, useValue: authServiceSpy },
         { provide: UserService, useValue: userServiceSpy },
         { provide: NotificationService, useValue: notifServiceSpy },
@@ -48,14 +48,14 @@ describe('HomeComponent', () => {
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
 
-    // Spy sur la méthode navigate du VRAI Router (au lieu de l'écraser)
+    
     navigateSpy = spyOn(TestBed.inject(Router), 'navigate');
 
     fixture.detectChanges();
   });
 
   afterEach(() => {
-    fixture.destroy();     // stoppe le setInterval du NotificationBell
+    fixture.destroy();     
   });
 
   it('should create', () => {

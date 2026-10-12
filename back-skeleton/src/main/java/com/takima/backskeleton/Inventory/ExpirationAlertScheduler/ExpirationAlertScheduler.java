@@ -32,7 +32,6 @@ public class ExpirationAlertScheduler {
         this.props = props;
     }
 
-    /** Tous les matins à 7h00 (heure serveur). */
     @Scheduled(cron = "0 0 7 * * *")
     @Transactional
     public void runDailyAlerts() {
@@ -50,7 +49,7 @@ public class ExpirationAlertScheduler {
                 ? NotificationType.EXPIRED
                 : NotificationType.EXPIRING_SOON;
 
-            // Anti-doublon : contrainte unique (inventory_id, type)
+      
             if (notifRepo.existsByInventoryIdAndType(inv.getId(), type)) continue;
 
             String msg = type == NotificationType.EXPIRED

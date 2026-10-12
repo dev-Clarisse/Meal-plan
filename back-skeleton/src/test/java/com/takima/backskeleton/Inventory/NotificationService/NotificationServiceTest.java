@@ -115,8 +115,6 @@ class NotificationServiceTest {
         verify(repo, times(2)).save(any(Notification.class));
     }
 
-    // ---------- helpers ----------
-
     private Notification notification(User owner, String invName,
                                       NotificationType type, String msg) {
         Inventory inv = new Inventory(owner, invName, BigDecimal.ONE, Unit.PIECE, LocalDate.now());

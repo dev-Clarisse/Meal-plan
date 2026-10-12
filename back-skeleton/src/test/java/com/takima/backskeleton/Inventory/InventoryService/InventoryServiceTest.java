@@ -49,15 +49,14 @@ class InventoryServiceTest {
         ReflectionTestUtils.setField(user, "id", userId);
     }
 
-    // ---------- listForUser ----------
 
     @Test
     void listForUser_shouldReturnItemsWithStatus() {
         LocalDate today = LocalDate.now();
-        Inventory fresh = inventory("Lait", LocalDate.now().plusDays(10));   // OK
-        Inventory soon = inventory("Yaourt", today.plusDays(2));              // EXPIRING_SOON
-        Inventory expired = inventory("Fromage", today.minusDays(1));         // EXPIRED
-        Inventory noDate = inventory("Riz", null);                            // NO_DATE
+        Inventory fresh = inventory("Lait", LocalDate.now().plusDays(10));   
+        Inventory soon = inventory("Yaourt", today.plusDays(2));             
+        Inventory expired = inventory("Fromage", today.minusDays(1));        
+        Inventory noDate = inventory("Riz", null);                            
 
         when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findAllByUserIdOrderByExpiryDateAsc(userId))
@@ -80,8 +79,6 @@ class InventoryServiceTest {
             .isInstanceOf(AccessDeniedException.class);
     }
 
-    // ---------- create ----------
-
     @Test
     void create_shouldSaveAndReturn() {
         InventoryRequest req = new InventoryRequest(
@@ -103,7 +100,6 @@ class InventoryServiceTest {
         verify(repo).save(any(Inventory.class));
     }
 
-    // ---------- update ----------
 
     @Test
     void update_shouldModifyExistingItem() {
@@ -138,7 +134,6 @@ class InventoryServiceTest {
         verify(repo, never()).save(any());
     }
 
-    // ---------- delete ----------
 
     @Test
     void delete_shouldRemoveOwnedItem() {
@@ -165,8 +160,6 @@ class InventoryServiceTest {
             .isInstanceOf(AccessDeniedException.class);
         verify(repo, never()).delete(any());
     }
-
-    // ---------- helpers ----------
 
     private Inventory inventory(String name, LocalDate expiry) {
         Inventory i = new Inventory(user, name, BigDecimal.ONE, Unit.PIECE, expiry);

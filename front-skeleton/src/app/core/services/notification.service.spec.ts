@@ -53,8 +53,6 @@ describe('NotificationService', () => {
     expect(service).toBeTruthy();
   });
 
-  // ---------- list ----------
-
   it('list() should GET /api/notifications', () => {
     service.list().subscribe(notifs => {
       expect(notifs).toEqual(mockNotifs);
@@ -74,8 +72,6 @@ describe('NotificationService', () => {
     const req = httpMock.expectOne(baseUrl);
     req.flush([]);
   });
-
-  // ---------- unreadCount ----------
 
   it('unreadCount() should GET /unread-count and extract count', () => {
     service.unreadCount().subscribe(count => {
@@ -107,8 +103,6 @@ describe('NotificationService', () => {
     expect(typeof result).toBe('number');
   });
 
-  // ---------- markAsRead ----------
-
   it('markAsRead() should POST to /{id}/read', () => {
     const id = 'n1';
     let completed = false;
@@ -117,7 +111,7 @@ describe('NotificationService', () => {
 
     const req = httpMock.expectOne(`${baseUrl}/${id}/read`);
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({});  // corps vide
+    expect(req.request.body).toEqual({});  
     req.flush(null);
 
     expect(completed).toBeTrue();
@@ -137,8 +131,6 @@ describe('NotificationService', () => {
     expect(errorCaught.status).toBe(403);
   });
 
-  // ---------- markAllAsRead ----------
-
   it('markAllAsRead() should POST to /read-all', () => {
     let completed = false;
 
@@ -150,8 +142,6 @@ describe('NotificationService', () => {
 
     expect(completed).toBeTrue();
   });
-
-  // ---------- vérif URLs ----------
 
   it('should use the correct endpoint for every method', () => {
     service.list().subscribe();

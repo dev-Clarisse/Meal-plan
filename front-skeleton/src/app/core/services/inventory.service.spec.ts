@@ -48,15 +48,12 @@ describe('InventoryService', () => {
   });
 
   afterEach(() => {
-    // Vérifie qu'aucune requête n'est restée en attente
     httpMock.verify();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
-
-  // ---------- list ----------
 
   it('list() should GET /api/inventory', () => {
     service.list().subscribe(items => {
@@ -84,8 +81,6 @@ describe('InventoryService', () => {
     expect(errorCaught.status).toBe(500);
   });
 
-  // ---------- create ----------
-
   it('create() should POST to /api/inventory with the payload', () => {
     const payload: InventoryRequest = {
       name: 'Pain',
@@ -104,9 +99,6 @@ describe('InventoryService', () => {
     expect(req.request.body).toEqual(payload);
     req.flush(created);
   });
-
-
-  // ---------- update ----------
 
   it('update() should PUT to /api/inventory/{id}', () => {
     const id = 'abc-123';
@@ -128,7 +120,6 @@ describe('InventoryService', () => {
     req.flush(updated);
   });
 
-  // ---------- delete ----------
 
   it('delete() should DELETE /api/inventory/{id}', () => {
     const id = 'abc-123';
@@ -157,8 +148,6 @@ describe('InventoryService', () => {
 
     expect(errorCaught.status).toBe(403);
   });
-
-  // ---------- vérif URLs ----------
 
   it('should use the correct endpoint for every method', () => {
     service.list().subscribe();

@@ -20,7 +20,6 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
-  // Même habillage que la page de connexion
   styleUrls: ['../login/login.component.scss'],
 })
 export class RegisterComponent {
@@ -33,7 +32,6 @@ export class RegisterComponent {
   showPassword = false;
   errorMessage = '';
 
-  // Contraintes alignées sur UserCreateRequest (email<=254, mdp 12..72, consentement obligatoire)
   form = this.fb.nonNullable.group(
     {
       email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
@@ -58,7 +56,6 @@ export class RegisterComponent {
     this.errorMessage = '';
     const { email, password, consent } = this.form.getRawValue();
 
-    // Inscription puis connexion automatique
     this.users
       .register({ email, password, consent })
       .pipe(switchMap(() => this.auth.login({ email, password })))

@@ -18,7 +18,6 @@ export class InventoryComponent implements OnInit {
   loading = signal(false);
   error = signal<string | null>(null);
 
-  // Formulaire
   form: InventoryRequest = { name: '', quantity: 1, unit: 'PIECE', expiryDate: null };
   editingId = signal<string | null>(null);
 

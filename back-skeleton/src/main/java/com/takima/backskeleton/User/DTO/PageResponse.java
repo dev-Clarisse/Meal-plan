@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-/** Réponse paginée stable (on ne sérialise pas directement PageImpl). */
 public record PageResponse<T>(
     List<T> content,
     int page,

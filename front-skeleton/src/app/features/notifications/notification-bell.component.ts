@@ -75,7 +75,6 @@ export class NotificationBellComponent implements OnInit {
 
   ngOnInit(): void {
     this.refresh();
-    // Polling simple toutes les 60s (à remplacer par WebSocket plus tard)
     setInterval(() => this.refresh(), 60_000);
   }
 

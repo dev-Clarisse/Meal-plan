@@ -19,7 +19,6 @@ export class AuthService {
       .post<TokenResponse>(`${environment.apiUrl}/auth/login`, credentials)
       .pipe(
         tap((res) => {
-          // sessionStorage : le token disparaît à la fermeture de l'onglet
           sessionStorage.setItem(TOKEN_KEY, res.accessToken);
           sessionStorage.setItem(EXPIRES_KEY, String(Date.now() + res.expiresIn * 1000));
           this.loggedIn$.next(true);
@@ -37,8 +36,6 @@ export class AuthService {
     return this.isAuthenticated() ? sessionStorage.getItem(TOKEN_KEY) : null;
   }
 
-  // Le JWT dure 15 min par défaut et il n'y a pas de refresh token :
-  // on considère l'utilisateur déconnecté une fois l'expiration passée.
   isAuthenticated(): boolean {
     const token = sessionStorage.getItem(TOKEN_KEY);
     const expiresAt = Number(sessionStorage.getItem(EXPIRES_KEY));

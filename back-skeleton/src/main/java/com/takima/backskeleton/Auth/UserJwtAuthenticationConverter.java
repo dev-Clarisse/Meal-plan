@@ -13,13 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Appelé après la validation de la signature et de l'expiration du JWT.
- * Relit l'utilisateur en base pour :
- *  - rejeter immédiatement le token d'un compte supprimé (droit à l'effacement)
- *  - appliquer immédiatement un changement de rôle (pas de rôle périmé dans le token)
- * Coût : une requête SQL par appel authentifié (cache possible si besoin).
- */
 @Component
 public class UserJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 

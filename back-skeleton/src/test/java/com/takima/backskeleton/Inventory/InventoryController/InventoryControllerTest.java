@@ -35,7 +35,7 @@ class InventoryControllerTest {
     @Autowired ObjectMapper objectMapper;
 
     @MockBean InventoryService service;
-    @MockBean UserRepository userRepository;   // requis par UserJwtAuthenticationConverter
+    @MockBean UserRepository userRepository;  
 
     private static final String EMAIL = "user@test.com";
 
@@ -88,7 +88,6 @@ class InventoryControllerTest {
 
     @Test
     void create_withInvalidBody_shouldReturn400() throws Exception {
-        // name vide → @NotBlank déclenche
         InventoryRequest invalid = new InventoryRequest("", new BigDecimal("1"), Unit.PIECE, null);
 
         mockMvc.perform(post("/api/inventory")

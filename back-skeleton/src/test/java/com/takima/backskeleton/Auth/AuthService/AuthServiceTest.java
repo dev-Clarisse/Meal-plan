@@ -7,9 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-
 import java.util.Optional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,17 +20,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.takima.backskeleton.Auth.JwtService;
 import com.takima.backskeleton.Auth.LoginRequest;
 import com.takima.backskeleton.Auth.TokenResponse;
 import com.takima.backskeleton.User.DAO.UserRepository;
 import com.takima.backskeleton.User.models.User;
 
-/**
- * Test UNITAIRE : on teste AuthService seul, sans Spring, sans base de données.
- * Ses 3 dépendances sont remplacées par des "mocks" (doublures contrôlées par le test).
- */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
@@ -45,24 +38,20 @@ class AuthServiceTest {
     @Mock
     private JwtService jwtService;
 
-    // Mockito crée AuthService en lui passant les 3 mocks ci-dessus
     @InjectMocks
     private AuthService authService;
 
     @Test
     @DisplayName("Identifiants valides : renvoie un token Bearer avec sa durée de vie")
     void login_withValidCredentials_returnsToken() {
-        // Arrange (préparer)
         LoginRequest request = new LoginRequest("clarisse@mail.com", "motdepasse-12345");
         User user = mock(User.class);
         when(userRepository.findByEmail("clarisse@mail.com")).thenReturn(Optional.of(user));
         when(jwtService.generate(user)).thenReturn("jwt-factice");
         when(jwtService.ttlSeconds()).thenReturn(900L);
 
-        // Act (agir)
         TokenResponse response = authService.login(request);
 
-        // Assert (vérifier)
         assertThat(response.accessToken()).isEqualTo("jwt-factice");
         assertThat(response.tokenType()).isEqualTo("Bearer");
         assertThat(response.expiresIn()).isEqualTo(900L);
@@ -79,7 +68,6 @@ class AuthServiceTest {
 
         authService.login(request);
 
-        // On "capture" ce qui a été envoyé à l'AuthenticationManager pour l'inspecter
         ArgumentCaptor<Authentication> captor = ArgumentCaptor.forClass(Authentication.class);
         verify(authenticationManager).authenticate(captor.capture());
         assertThat(captor.getValue().getPrincipal()).isEqualTo("clarisse@mail.com");
@@ -96,7 +84,6 @@ class AuthServiceTest {
 
         assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         assertThat(ex.getReason()).isEqualTo("Identifiants invalides");
-        // Comme l'authentification a échoué, on ne doit ni chercher l'utilisateur ni créer de JWT
         verifyNoInteractions(userRepository, jwtService);
     }
 
@@ -109,7 +96,6 @@ class AuthServiceTest {
         ResponseStatusException ex =
             assertThrows(ResponseStatusException.class, () -> authService.login(request));
 
-        // Même message que pour un mauvais mot de passe : on ne révèle pas si l'email existe
         assertThat(ex.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         assertThat(ex.getReason()).isEqualTo("Identifiants invalides");
         verifyNoInteractions(jwtService);

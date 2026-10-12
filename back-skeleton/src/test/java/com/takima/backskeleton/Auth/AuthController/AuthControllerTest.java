@@ -22,13 +22,7 @@ import com.takima.backskeleton.Auth.AuthService.AuthService;
 import com.takima.backskeleton.Auth.LoginRequest;
 import com.takima.backskeleton.Auth.TokenResponse;
 
-/**
- * Test de la couche WEB : on démarre seulement le contrôleur (@WebMvcTest) et on envoie
- * de vraies requêtes HTTP simulées avec MockMvc. AuthService est un mock.
- *
- * addFilters = false : on désactive Spring Security ici, car on teste le contrôleur
- * (JSON, validation, codes HTTP), pas la sécurité.
- */
+
 @WebMvcTest(AuthController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
