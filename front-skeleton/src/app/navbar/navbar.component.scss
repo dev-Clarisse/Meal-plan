@@ -1,40 +1,94 @@
-@use "theme";
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 68px;
+  background: rgba(250, 246, 239, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
 
-nav {
-  height: 80px;
-  background: linear-gradient(to right, theme.$common-purple, theme.$common-red);
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--olive);
 
-  div {
-    height: 100%;
-    display: flex;
-    align-items: center;
+  &:hover {
+    color: var(--olive);
+  }
+}
 
-    img {
-      margin-left: 20px;
-      height: 60px;
-      transition: 0.3s;
+.brand-mark {
+  font-size: 1.4rem;
+}
 
-      &:hover {
-        transform: scale(1.1);
+.brand-name {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.links {
+  display: flex;
+  gap: 28px;
+
+  a {
+    position: relative;
+    padding: 6px 0;
+    font-weight: 500;
+    color: var(--muted);
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: var(--terracotta);
+      transition: width 0.25s;
+    }
+    &:hover,
+    &.active {
+      color: var(--olive);
+      &::after {
+        width: 100%;
       }
     }
   }
 }
 
-mat-nav-list {
-  margin-left: 50px;
-  display: flex;
-  flex-direction: row;
-  width: 250px;
+.topbar.on-home {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
 
-  span,
-  a {
-    font-size: large;
-    color: theme.$white;
-    transition: 0.3s;
+  .brand,
+  .brand:hover,
+  .brand-name {
+    color: #fff;
+  }
 
-    &:hover {
-      transform: scale(1.2);
+  .links a {
+    color: rgba(255, 255, 255, 0.85);
+    &:hover,
+    &.active {
+      color: #fff;
     }
   }
+}
+
+.brand-name {
+  font-style: italic;
+  font-size: 1.6rem;
 }

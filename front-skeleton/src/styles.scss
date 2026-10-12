@@ -1,26 +1,129 @@
 @use "theme";
 @import "./bootstrap/_bootstrap";
 
-/* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%;}
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-.mat-mini-fab {
-  color : theme.$white !important;
+:root {
+  --bg: #faf6ef;
+  --surface: #ffffff;
+  --ink: #2b2a28;
+  --muted: #7a746b;
+  --olive: #2f4a3a;
+  --olive-dark: #223729;
+  --terracotta: #c4693d;
+  --line: #e7dfd1;
+  --shadow: 0 6px 24px rgba(47, 74, 58, 0.08);
+  --radius: 14px;
 }
 
-.mat-raised-button {
-  color : theme.$white !important;
+html,
+body {
+  height: 100%;
 }
 
-table {
-  font-size: medium;
-  tr {
-    height: 57px;
-    td {
-      vertical-align: middle;
-    }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Inter", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  color: var(--olive);
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--terracotta);
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--olive);
+  }
+}
+
+button,
+.btn-bistro {
+  font-family: inherit;
+  font-weight: 500;
+  border: 1px solid var(--olive);
+  background: var(--olive);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+
+  &:hover:not(:disabled) {
+    background: var(--olive-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
   }
 
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 12px;
+  background: var(--surface);
+  color: var(--ink);
+
+  &:focus {
+    outline: none;
+    border-color: var(--olive);
+    box-shadow: 0 0 0 3px rgba(47, 74, 58, 0.15);
+  }
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding: 7px 16px 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+
+  .arrow {
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+
+  &:hover {
+    color: var(--olive);
+    border-color: var(--olive);
+    box-shadow: var(--shadow);
+
+    .arrow {
+      transform: translateX(-4px);
+    }
+  }
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%232f4a3a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 12px 8px;
 }

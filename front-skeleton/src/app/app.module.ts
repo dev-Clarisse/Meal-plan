@@ -20,7 +20,6 @@ import { HttpClientModule } from "@angular/common/http"
   declarations: [
     AppComponent,
     NavbarComponent,
-    HomeComponent,
     StudentsComponent,
     StudentDetailsComponent,
     MajorsComponent,
@@ -35,6 +34,7 @@ import { HttpClientModule } from "@angular/common/http"
     MatIconModule,
     MatButtonModule,
     HttpClientModule,
+    HomeComponent,
   ],
   providers: [],
   bootstrap: [AppComponent],
