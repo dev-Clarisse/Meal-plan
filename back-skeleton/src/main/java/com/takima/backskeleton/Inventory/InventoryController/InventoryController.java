@@ -20,28 +20,32 @@ public class InventoryController {
 
     public InventoryController(InventoryService service) { this.service = service; }
 
+    private static UUID userId(Jwt jwt) {
+        return UUID.fromString(jwt.getSubject());
+    }
+
     @GetMapping
     public List<InventoryResponse> list(@AuthenticationPrincipal Jwt jwt) {
-        return service.listForUser(jwt.getSubject());
+        return service.listForUser(userId(jwt));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public InventoryResponse create(@AuthenticationPrincipal Jwt jwt,
                                     @Valid @RequestBody InventoryRequest req) {
-        return service.create(jwt.getSubject(), req);
+        return service.create(userId(jwt), req);
     }
 
     @PutMapping("/{id}")
     public InventoryResponse update(@AuthenticationPrincipal Jwt jwt,
                                     @PathVariable UUID id,
                                     @Valid @RequestBody InventoryRequest req) {
-        return service.update(jwt.getSubject(), id, req);
+        return service.update(userId(jwt), id, req);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
-        service.delete(jwt.getSubject(), id);
+        service.delete(userId(jwt), id);
     }
 }

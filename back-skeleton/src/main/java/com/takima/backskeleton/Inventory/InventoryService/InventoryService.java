@@ -7,9 +7,11 @@ import com.takima.backskeleton.Inventory.models.Inventory;
 import com.takima.backskeleton.User.DAO.UserRepository;
 import com.takima.backskeleton.User.models.User;
 import com.takima.backskeleton.config.InventoryProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,24 +31,24 @@ public class InventoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<InventoryResponse> listForUser(String email) {
-        UUID userId = currentUserId(email);
+    public List<InventoryResponse> listForUser(UUID userId) {
         return repo.findAllByUserIdOrderByExpiryDateAsc(userId)
                    .stream().map(this::toResponse).toList();
     }
 
     @Transactional
-    public InventoryResponse create(String email, InventoryRequest req) {
-        User user = userRepo.findByEmail(email).orElseThrow();
+    public InventoryResponse create(UUID userId, InventoryRequest req) {
+        User user = userRepo.findById(userId)
+            .orElseThrow(() -> new AccessDeniedException("User not found"));
+
         Inventory inv = new Inventory(user, req.name(), req.quantity(), req.unit(), req.expiryDate());
         return toResponse(repo.save(inv));
     }
 
     @Transactional
-    public InventoryResponse update(String email, UUID id, InventoryRequest req) {
-        UUID userId = currentUserId(email);
+    public InventoryResponse update(UUID userId, UUID id, InventoryRequest req) {
         Inventory inv = repo.findByIdAndUserId(id, userId)
-            .orElseThrow(() -> new AccessDeniedException("Inventory not found or not yours"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inventory item not found"));
         inv.setName(req.name());
         inv.setQuantity(req.quantity());
         inv.setUnit(req.unit());
@@ -55,18 +57,10 @@ public class InventoryService {
     }
 
     @Transactional
-    public void delete(String email, UUID id) {
-        UUID userId = currentUserId(email);
+    public void delete(UUID userId, UUID id) {
         Inventory inv = repo.findByIdAndUserId(id, userId)
-            .orElseThrow(() -> new AccessDeniedException("Inventory not found or not yours"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inventory item not found"));
         repo.delete(inv);
-    }
-
-
-    private UUID currentUserId(String email) {
-        return userRepo.findByEmail(email)
-            .orElseThrow(() -> new AccessDeniedException("Unknown user"))
-            .getId();
     }
 
     private InventoryResponse toResponse(Inventory i) {

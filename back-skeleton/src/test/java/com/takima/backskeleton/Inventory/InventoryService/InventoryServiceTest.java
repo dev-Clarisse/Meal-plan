@@ -1,7 +1,6 @@
 package com.takima.backskeleton.Inventory.InventoryService;
 
 import com.takima.backskeleton.Inventory.DAO.InventoryRepository;
-import com.takima.backskeleton.Inventory.InventoryService.InventoryService;
 import com.takima.backskeleton.Inventory.DTO.InventoryRequest;
 import com.takima.backskeleton.Inventory.DTO.InventoryResponse;
 import com.takima.backskeleton.Inventory.models.Inventory;
@@ -16,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -38,31 +38,28 @@ class InventoryServiceTest {
     InventoryService service;
 
     UUID userId = UUID.randomUUID();
-    String userEmail = "user@test.com";
     User user;
 
     @BeforeEach
     void setUp() {
         InventoryProperties props = new InventoryProperties(3);
         service = new InventoryService(repo, userRepo, props);
-        user = new User(userEmail, "hash", Instant.now());
+        user = new User("user@test.com", "hash", Instant.now());
         ReflectionTestUtils.setField(user, "id", userId);
     }
-
 
     @Test
     void listForUser_shouldReturnItemsWithStatus() {
         LocalDate today = LocalDate.now();
-        Inventory fresh = inventory("Lait", LocalDate.now().plusDays(10));   
-        Inventory soon = inventory("Yaourt", today.plusDays(2));             
-        Inventory expired = inventory("Fromage", today.minusDays(1));        
-        Inventory noDate = inventory("Riz", null);                            
+        Inventory fresh = inventory("Lait", today.plusDays(10));
+        Inventory soon = inventory("Yaourt", today.plusDays(2));
+        Inventory expired = inventory("Fromage", today.minusDays(1));
+        Inventory noDate = inventory("Riz", null);
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findAllByUserIdOrderByExpiryDateAsc(userId))
             .thenReturn(List.of(expired, soon, fresh, noDate));
 
-        List<InventoryResponse> result = service.listForUser(userEmail);
+        List<InventoryResponse> result = service.listForUser(userId);
 
         assertThat(result).hasSize(4);
         assertThat(result.get(0).status()).isEqualTo(InventoryResponse.ExpiryStatus.EXPIRED);
@@ -72,27 +69,19 @@ class InventoryServiceTest {
     }
 
     @Test
-    void listForUser_shouldThrowIfUserUnknown() {
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> service.listForUser(userEmail))
-            .isInstanceOf(AccessDeniedException.class);
-    }
-
-    @Test
     void create_shouldSaveAndReturn() {
         InventoryRequest req = new InventoryRequest(
             "Lait", new BigDecimal("1.500"), Unit.LITER, LocalDate.now().plusDays(5)
         );
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
+        when(userRepo.findById(userId)).thenReturn(Optional.of(user));
         when(repo.save(any(Inventory.class))).thenAnswer(inv -> {
             Inventory i = inv.getArgument(0);
             ReflectionTestUtils.setField(i, "id", UUID.randomUUID());
             return i;
         });
 
-        InventoryResponse response = service.create(userEmail, req);
+        InventoryResponse response = service.create(userId, req);
 
         assertThat(response.name()).isEqualTo("Lait");
         assertThat(response.quantity()).isEqualByComparingTo("1.500");
@@ -100,6 +89,16 @@ class InventoryServiceTest {
         verify(repo).save(any(Inventory.class));
     }
 
+    @Test
+    void create_shouldThrowIfUserUnknown() {
+        InventoryRequest req = new InventoryRequest("X", BigDecimal.ONE, Unit.PIECE, null);
+
+        when(userRepo.findById(userId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.create(userId, req))
+            .isInstanceOf(AccessDeniedException.class);
+        verify(repo, never()).save(any());
+    }
 
     @Test
     void update_shouldModifyExistingItem() {
@@ -111,29 +110,26 @@ class InventoryServiceTest {
             "Lait entier", new BigDecimal("2"), Unit.LITER, LocalDate.now().plusDays(3)
         );
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findByIdAndUserId(invId, userId)).thenReturn(Optional.of(existing));
         when(repo.save(any(Inventory.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        InventoryResponse response = service.update(userEmail, invId, req);
+        InventoryResponse response = service.update(userId, invId, req);
 
         assertThat(response.name()).isEqualTo("Lait entier");
         assertThat(response.quantity()).isEqualByComparingTo("2");
     }
 
     @Test
-    void update_shouldThrowIfNotOwned() {
+    void update_shouldThrowNotFoundIfNotOwned() {
         UUID invId = UUID.randomUUID();
         InventoryRequest req = new InventoryRequest("X", BigDecimal.ONE, Unit.PIECE, null);
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findByIdAndUserId(invId, userId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.update(userEmail, invId, req))
-            .isInstanceOf(AccessDeniedException.class);
+        assertThatThrownBy(() -> service.update(userId, invId, req))
+            .isInstanceOf(ResponseStatusException.class);
         verify(repo, never()).save(any());
     }
-
 
     @Test
     void delete_shouldRemoveOwnedItem() {
@@ -141,23 +137,21 @@ class InventoryServiceTest {
         Inventory existing = new Inventory(user, "Lait", BigDecimal.ONE, Unit.LITER, null);
         ReflectionTestUtils.setField(existing, "id", invId);
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findByIdAndUserId(invId, userId)).thenReturn(Optional.of(existing));
 
-        service.delete(userEmail, invId);
+        service.delete(userId, invId);
 
         verify(repo).delete(existing);
     }
 
     @Test
-    void delete_shouldThrowIfNotOwned() {
+    void delete_shouldThrowNotFoundIfNotOwned() {
         UUID invId = UUID.randomUUID();
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findByIdAndUserId(invId, userId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.delete(userEmail, invId))
-            .isInstanceOf(AccessDeniedException.class);
+        assertThatThrownBy(() -> service.delete(userId, invId))
+            .isInstanceOf(ResponseStatusException.class);
         verify(repo, never()).delete(any());
     }
 

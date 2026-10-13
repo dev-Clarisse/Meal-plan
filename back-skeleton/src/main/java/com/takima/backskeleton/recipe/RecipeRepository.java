@@ -10,7 +10,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
-    @Query("select r from Recipe r where :title is null or lower(r.title) like lower(concat('%', :title, '%'))")
+    @Query("""
+        select r from Recipe r
+        where lower(r.title) like lower(concat('%', coalesce(:title, ''), '%'))
+    """)
     Page<Recipe> search(@Param("title") String title, Pageable pageable);
 
     @EntityGraph(attributePaths = {"ingredients", "ingredients.ingredient"})
