@@ -1,0 +1,15 @@
+@if (isLoggedIn()) {
+  <header class="topbar" [class.transparent]="transparent()">
+    <a class="brand" routerLink="/home">Mijoté</a>
+
+    <nav class="links">
+      <a routerLink="/recettes" routerLinkActive="active">Recettes</a>
+      <a routerLink="/inventory" routerLinkActive="active">Inventaire</a>
+    </nav>
+
+    <div class="actions">
+      <app-notification-bell />
+      <button type="button" class="logout" (click)="logout()">Déconnexion</button>
+    </div>
+  </header>
+}
