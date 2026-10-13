@@ -28,5 +28,30 @@ export const routes: Routes = [
       import('./features/inventory/inventory.component').then((m) => m.InventoryComponent),
   },
 
+  {
+    path: 'recettes',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/recipes/recipe-list/recipe-list.component').then((m) => m.RecipeListComponent),
+  },
+  {
+    path: 'recettes/nouvelle',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/recipes/recipe-form/recipe-form.component').then((m) => m.RecipeFormComponent),
+  },
+  {
+    path: 'recettes/:id/modifier',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/recipes/recipe-form/recipe-form.component').then((m) => m.RecipeFormComponent),
+  },
+  {
+    path: 'recettes/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/recipes/recipe-detail/recipe-detail.component').then((m) => m.RecipeDetailComponent),
+  },
+
   { path: '**', redirectTo: 'login' },
 ];
