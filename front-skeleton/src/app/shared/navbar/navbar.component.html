@@ -1,7 +1,7 @@
-@if (isLoggedIn()) {
-  <header class="topbar" [class.transparent]="transparent()">
-    <a class="brand" routerLink="/home">Mijoté</a>
+<header class="topbar" [class.transparent]="transparent() && !scrolled()">
+  <a class="brand" routerLink="/">Mijoté</a>
 
+  @if (isLoggedIn()) {
     <nav class="links">
       <a routerLink="/recettes" routerLinkActive="active">Recettes</a>
       <a routerLink="/inventory" routerLinkActive="active">Inventaire</a>
@@ -11,5 +11,10 @@
       <app-notification-bell />
       <button type="button" class="logout" (click)="logout()">Déconnexion</button>
     </div>
-  </header>
-}
+  } @else if (!authPage()) {
+    <div class="actions">
+      <a class="signin" routerLink="/login">Connexion</a>
+      <a class="signup" routerLink="/register">Créer un compte</a>
+    </div>
+  }
+</header>
