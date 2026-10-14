@@ -11,3 +11,8 @@ connexion.md
 .env
 
 CommandeTest.md
+
+target/
+*.log
+.angular/
+node_modules/
