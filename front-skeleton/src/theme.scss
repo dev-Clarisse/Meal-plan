@@ -1,53 +1,54 @@
-$green:        #2f4a3a;
-$green-dark:   #223729;
-$green-light:  #e9efe9;
-$yellow:       #c4693d;
-$yellow-dark:  #a9552c;
-$yellow-light: #f6e4d8;
-$cream:        #faf6ef;
+@use "@angular/material" as mat;
+@include mat.core();
 
-$primary:   $green;
-$secondary: $yellow;
-$success:   $green;
-$warning:   $yellow;
-$light:     $cream;
-$dark:      #2b2a28;
+$dark-purple-palette: (
+  50: #6a0f59,
+  100: #7d1269,
+  200: #74107f,
+  300: #580c61,
+  400: #5d0d82,
+  500: #4a0a67,
+  600: #43095d,
+  700: #35074a,
+  800: #290539,
+  900: #1b0325,
+  contrast: (
+    A50: #eac7f9,
+  ),
+);
+$red-purple-palette: (
+  50: #b71c32,
+  100: #b01c32,
+  200: #c31d47,
+  300: #a5193d,
+  400: #b11b52,
+  500: #961644,
+  600: #a01860,
+  700: #82134e,
+  800: #8d1667,
+  900: #751255,
+  contrast: (
+    A50: #961644,
+  ),
+);
 
-$body-bg:    $cream;
-$body-color: #2b2a28;
-$link-color: $yellow;
-$link-hover-color: $green;
+$my-primary: mat.define-palette($dark-purple-palette, 500, 50, 900);
+$my-accent: mat.define-palette($red-purple-palette, 500, 50, 900);
+$my-warn: mat.define-palette(mat.$red-palette);
 
-$font-family-sans-serif: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-$headings-font-family: 'Playfair Display', Georgia, serif;
-$headings-color: $green;
-$headings-font-weight: 600;
+$my-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $my-primary,
+      accent: $my-accent,
+      warn: $my-warn,
+    ),
+  )
+);
 
-$border-radius:    .65rem;
-$border-radius-lg: .875rem;
-$btn-border-radius: 999px;
-$input-border-color: #e7dfd1;
-$input-focus-border-color: $green;
-$input-focus-box-shadow: 0 0 0 .25rem rgba($green, .15);
+@include mat.all-component-colors($my-theme);
 
-@import 'bootstrap/scss/bootstrap';
-
-:root {
-  --mp-green: #{$green};
-  --mp-green-dark: #{$green-dark};
-  --mp-green-light: #{$green-light};
-  --mp-yellow: #{$yellow};
-  --mp-yellow-dark: #{$yellow-dark};
-  --mp-yellow-light: #{$yellow-light};
-  --mp-cream: #{$cream};
-  --bg: #{$cream};
-  --surface: #ffffff;
-  --ink: #2b2a28;
-  --muted: #7a746b;
-  --olive: #{$green};
-  --olive-dark: #{$green-dark};
-  --terracotta: #{$yellow};
-  --line: #e7dfd1;
-  --shadow: 0 6px 24px rgba(47, 74, 58, 0.08);
-  --radius: 14px;
-}
+$common-purple: mat.get-color-from-palette($dark-purple-palette, 500);
+$common-red: mat.get-color-from-palette(mat.$red-palette, A700);
+$warn: mat.get-color-from-palette($my-warn, 400);
+$white: #ffffff;

@@ -33,9 +33,3 @@ build/
 .vscode/
 
 .env
-
-connexion.md
-
-Commande_git.md
-
-target/
