@@ -1,12 +1,5 @@
 <div class="container py-4">
 
-  <!-- Barre du haut : notification bell + déconnexion -->
-  <div class="d-flex justify-content-end align-items-center gap-3 mb-4">
-    <app-notification-bell />
-    <button class="btn btn-outline-mp btn-sm" (click)="logout()">Se déconnecter</button>
-  </div>
-
-  <!-- En-tête utilisateur -->
   @if (user(); as u) {
     <div class="card mp-card mb-4">
       <div class="card-body d-flex align-items-center gap-3">
@@ -19,7 +12,6 @@
     </div>
   }
 
-  <!-- Actions principales -->
   <div class="row g-4">
     <div class="col-md-6">
       <div class="card mp-card h-100">
