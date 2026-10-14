@@ -9,12 +9,11 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class BackSkeletonApplicationTests {
 
-	    @Value("${spring.datasource.url}")
+    @Value("${spring.datasource.url}")
     private String datasourceUrl;
 
     @Test
     void contextLoads() {
         System.out.println(">>> Datasource URL: " + datasourceUrl);
     }
-
 }
