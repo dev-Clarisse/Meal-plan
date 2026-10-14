@@ -1,0 +1,159 @@
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  height: 68px;
+  padding: 0 32px;
+  background: rgba(250, 246, 239, 0.62);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid rgba(231, 223, 209, 0.7);
+  transition: background 0.45s ease, backdrop-filter 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+}
+
+.brand {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--olive);
+
+  &:hover {
+    color: var(--olive);
+  }
+}
+
+.links {
+  display: flex;
+  gap: 28px;
+
+  a {
+    position: relative;
+    padding: 6px 0;
+    font-weight: 500;
+    color: var(--muted);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: var(--terracotta);
+      transition: width 0.25s;
+    }
+
+    &:hover,
+    &.active {
+      color: var(--olive);
+
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logout {
+  background: transparent;
+  color: var(--olive);
+
+  &:hover:not(:disabled) {
+    background: var(--olive);
+    color: #fff;
+  }
+}
+
+.topbar.transparent {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(250, 246, 239, 0);
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+  border-bottom-color: transparent;
+
+  .brand,
+  .links a {
+    color: #fff;
+  }
+
+  .links a::after {
+    background: #f0b48f;
+  }
+
+  .logout {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.8);
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.16);
+    }
+  }
+}
+
+.signin {
+  font-weight: 500;
+  color: var(--muted);
+
+  &:hover {
+    color: var(--olive);
+  }
+}
+
+.signup {
+  padding: 8px 18px;
+  border: 1px solid var(--olive);
+  border-radius: 999px;
+  font-weight: 500;
+  color: var(--olive);
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: var(--olive);
+    color: #fff;
+  }
+}
+
+.topbar.transparent {
+  .signin {
+    color: rgba(255, 255, 255, 0.85);
+
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  .signup {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.8);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+  }
+}
+
+:host ::ng-deep .bell-btn {
+  color: inherit;
+}
+
+.topbar {
+  color: var(--olive);
+}
+
+.topbar.transparent {
+  color: #fff;
+}
