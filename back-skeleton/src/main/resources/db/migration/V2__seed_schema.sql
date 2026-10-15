@@ -14,7 +14,7 @@ VALUES
     'b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22', 
     'bob@example.com', 
     '$2a$10$7XbX8Z6...fakeHashForTest2', 
-    'ADMIN', 
+    'USER', 
     CURRENT_TIMESTAMP - INTERVAL '5 days', 
     CURRENT_TIMESTAMP - INTERVAL '5 days', 
     CURRENT_TIMESTAMP - INTERVAL '5 days', 
@@ -25,7 +25,7 @@ INSERT INTO inventory (id, user_id, name, quantity, unit, expiry_date, created_a
 VALUES 
 (
     'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c11', 
-    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', -- CORRIGÉ : pointe vers l'ID d'Alice (a11)
     'Lait demi-écrémé', 
     2.000, 
     'LITRE', 
@@ -36,7 +36,7 @@ VALUES
 ),
 (
     'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c22', 
-    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380c11', 
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 
     'Riz basmati', 
     1.500, 
     'KG', 
