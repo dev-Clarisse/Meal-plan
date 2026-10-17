@@ -5,9 +5,9 @@ VALUES
     'alice@example.com', 
     '$2a$10$7XbX8Z6...fakeHashForTest1', 
     'USER', 
-    CURRENT_TIMESTAMP - INTERVAL '10 days', 
-    CURRENT_TIMESTAMP - INTERVAL '10 days', 
-    CURRENT_TIMESTAMP - INTERVAL '10 days', 
+    CURRENT_TIMESTAMP - INTERVAL '10' DAY, 
+    CURRENT_TIMESTAMP - INTERVAL '10' DAY, 
+    CURRENT_TIMESTAMP - INTERVAL '10' DAY, 
     0
 ),
 (
@@ -15,9 +15,9 @@ VALUES
     'bob@example.com', 
     '$2a$10$7XbX8Z6...fakeHashForTest2', 
     'USER', 
-    CURRENT_TIMESTAMP - INTERVAL '5 days', 
-    CURRENT_TIMESTAMP - INTERVAL '5 days', 
-    CURRENT_TIMESTAMP - INTERVAL '5 days', 
+    CURRENT_TIMESTAMP - INTERVAL '5' DAY, 
+    CURRENT_TIMESTAMP - INTERVAL '5' DAY, 
+    CURRENT_TIMESTAMP - INTERVAL '5' DAY, 
     0
 );
 
@@ -29,7 +29,7 @@ VALUES
     'Lait demi-écrémé', 
     2.000, 
     'LITRE', 
-    CURRENT_DATE + INTERVAL '3 days', 
+    CURRENT_DATE + INTERVAL '3' DAY, 
     CURRENT_TIMESTAMP, 
     CURRENT_TIMESTAMP, 
     0
@@ -40,7 +40,7 @@ VALUES
     'Riz basmati', 
     1.500, 
     'KG', 
-    CURRENT_DATE + INTERVAL '180 days', 
+    CURRENT_DATE + INTERVAL '180' DAY, 
     CURRENT_TIMESTAMP, 
     CURRENT_TIMESTAMP, 
     0
@@ -51,7 +51,7 @@ VALUES
     'Oeufs bio', 
     6.000, 
     'UNIT', 
-    CURRENT_DATE + INTERVAL '1 day', 
+    CURRENT_DATE + INTERVAL '1' day, 
     CURRENT_TIMESTAMP, 
     CURRENT_TIMESTAMP, 
     0

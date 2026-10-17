@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { Page, Recipe, RecipeRequest } from '../models/recipe.model';
+import { Page, Recipe, RecipeRequest, RecipeDraft } from '../models/recipe.model';
 
 @Injectable({ providedIn: 'root' })
 export class RecipeService {
@@ -31,5 +31,9 @@ export class RecipeService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.url}/${id}`);
+  }
+
+  generate(prompt: string, servings?: number): Observable<RecipeDraft> {
+    return this.http.post<RecipeDraft>(`${this.url}/generate`, { prompt, servings });
   }
 }

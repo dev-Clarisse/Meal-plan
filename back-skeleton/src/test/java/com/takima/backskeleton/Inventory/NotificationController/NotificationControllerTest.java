@@ -26,7 +26,7 @@ class NotificationControllerTest {
     @Autowired MockMvc mockMvc;
 
     @MockBean NotificationService service;
-    @MockBean UserRepository userRepository;   // requis par UserJwtAuthenticationConverter
+    @MockBean UserRepository userRepository;   
 
     private static final String EMAIL = "user@test.com";
 
