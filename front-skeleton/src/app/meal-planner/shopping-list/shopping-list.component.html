@@ -1,0 +1,29 @@
+<div class="mt-4">
+  <h5>Liste de courses</h5>
+  <button class="btn btn-success btn-sm" (click)="generate()">
+    {{ list ? 'Régénérer la liste' : 'Générer la liste de courses' }}
+  </button>
+
+  @if (error) {
+    <div class="alert alert-danger py-2 mt-2">{{ error }}</div>
+  }
+
+  @if (list) {
+    @if (list.empty) {
+      <p class="mt-2 text-success">Votre stock suffit : la liste de courses est vide.</p>
+    } @else {
+      <ul class="list-unstyled mt-2">
+        @for (item of list.items; track item.id) {
+          <li>
+            <label>
+              <input type="checkbox" [checked]="item.purchased" (change)="toggle(item)" />
+              <span [class.text-decoration-line-through]="item.purchased">
+                {{ item.name }} : {{ item.quantity }} {{ item.unit }}
+              </span>
+            </label>
+          </li>
+        }
+      </ul>
+    }
+  }
+</div>
