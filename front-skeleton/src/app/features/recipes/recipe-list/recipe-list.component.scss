@@ -80,58 +80,73 @@
 }
 
 .recipe-card {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  padding: 24px;
+  padding: 28px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  transition: transform 0.25s, box-shadow 0.25s;
+  color: var(--ink);
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
 
   &:hover {
+    color: var(--ink);
+    border-color: var(--olive);
+    box-shadow: 0 14px 32px rgba(47, 74, 58, 0.12);
     transform: translateY(-4px);
-    box-shadow: 0 14px 32px rgba(47, 74, 58, 0.14);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--olive);
+    outline-offset: 3px;
   }
 
   h2 {
-    margin: 0 0 10px;
-    font-size: 1.45rem;
-
-    a {
-      color: var(--olive);
-
-      &:hover {
-        color: var(--terracotta);
-      }
-    }
+    margin: 0 0 18px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--olive);
   }
 
   ul {
-    list-style: none;
-    margin: 16px 0 0;
+    flex: 1;
+    margin: 0;
     padding: 16px 0 0;
+    list-style: none;
     border-top: 1px solid var(--line);
 
     li {
       padding: 3px 0;
+      color: var(--muted);
     }
   }
 }
 
-.badge-servings {
-  display: inline-block;
-  padding: 3px 12px;
-  border-radius: 999px;
-  background: #f1ebde;
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 500;
 }
 
 .qty {
   display: inline-block;
   min-width: 78px;
   font-weight: 600;
+  color: var(--terracotta);
+}
+
+.more {
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+  font-style: italic;
   color: var(--terracotta);
 }
 
@@ -152,4 +167,9 @@
 
 .error {
   color: #b00020;
+}
+
+.banner-inner h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
 }

@@ -33,18 +33,24 @@
     <div class="row g-4">
       @for (recipe of recipes(); track recipe.id) {
         <div class="col-12 col-md-6 col-lg-4">
-          <article class="recipe-card">
-            <h2><a [routerLink]="['/recettes', recipe.id]">{{ recipe.title }}</a></h2>
-            <span class="badge-servings">{{ recipe.servings }} portion(s)</span>
+          <a class="recipe-card" [routerLink]="['/recettes', recipe.id]">
+            <div class="meta">
+              <span><i class="bi bi-people" aria-hidden="true"></i> {{ recipe.servings }} portion(s)</span>
+              <span>{{ recipe.ingredients.length }} ingrédient(s)</span>
+            </div>
+            <h2>{{ recipe.title }}</h2>
             <ul>
-              @for (line of recipe.ingredients; track line.ingredientId) {
+              @for (line of recipe.ingredients.slice(0, 3); track line.ingredientId) {
                 <li>
                   <span class="qty">{{ line.quantity }} {{ line.unit }}</span>
                   {{ line.ingredientName }}
                 </li>
               }
             </ul>
-          </article>
+            @if (recipe.ingredients.length > 3) {
+              <p class="more">+ {{ recipe.ingredients.length - 3 }} autres</p>
+            }
+          </a>
         </div>
       }
     </div>

@@ -4,12 +4,15 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Ingredient } from '../models/ingredient.model';
 import { Recipe, RecipeRequest, Unit } from '../models/recipe.model';
 import { IngredientService } from '../services/ingredient.service';
+import { BackLinkComponent } from '../../../shared/back-link/back-link.component';
+import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
+import { ToastService } from '../../../shared/toast/toast.service';
 import { RecipeService } from '../services/recipe.service';
 
 @Component({
   selector: 'app-recipe-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [BackLinkComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './recipe-form.component.html',
   styleUrl: './recipe-form.component.scss',
 })
@@ -17,6 +20,8 @@ export class RecipeFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly confirmService = inject(ConfirmService);
+  private readonly toast = inject(ToastService);
   private readonly recipeService = inject(RecipeService);
   private readonly ingredientService = inject(IngredientService);
 
@@ -24,6 +29,8 @@ export class RecipeFormComponent implements OnInit {
   readonly ingredients = signal<Ingredient[]>([]);
   readonly error = signal<string | null>(null);
   readonly saving = signal(false);
+
+  readonly sameId = (a: unknown, b: unknown) => Number(a) === Number(b);
 
   recipeId: number | null = null;
 
@@ -39,16 +46,17 @@ export class RecipeFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.ingredientService.search().subscribe((list) => this.ingredients.set(list));
-
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.recipeId = Number(id);
-      this.recipeService.findById(this.recipeId).subscribe({
-        next: (recipe) => this.fill(recipe),
-        error: () => this.error.set('Recette introuvable.'),
-      });
-    }
+    this.ingredientService.search().subscribe((list) => {
+      this.ingredients.set(list);
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        this.recipeId = Number(id);
+        this.recipeService.findById(this.recipeId).subscribe({
+          next: (recipe) => this.fill(recipe),
+          error: () => this.error.set('Recette introuvable.'),
+        });
+      }
+    });
   }
 
   addLine(): void {
@@ -61,7 +69,7 @@ export class RecipeFormComponent implements OnInit {
     }
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -78,6 +86,18 @@ export class RecipeFormComponent implements OnInit {
       })),
     };
 
+    const editing = this.recipeId !== null;
+    const confirmed = await this.confirmService.ask({
+      title: editing ? 'Enregistrer les modifications ?' : 'Créer la recette ?',
+      message: editing
+        ? 'La recette sera mise à jour avec ces informations.'
+        : 'La nouvelle recette sera ajoutée à votre carnet.',
+      confirmLabel: editing ? 'Enregistrer' : 'Créer',
+    });
+    if (!confirmed) {
+      return;
+    }
+
     this.saving.set(true);
     this.error.set(null);
     const call =
@@ -86,8 +106,12 @@ export class RecipeFormComponent implements OnInit {
         : this.recipeService.update(this.recipeId, request);
 
     call.subscribe({
-      next: (saved) => this.router.navigate(['/recettes', saved.id]),
+      next: (saved) => {
+        this.toast.success(editing ? 'Recette modifiée.' : 'Recette créée.');
+        this.router.navigate(['/recettes', saved.id], { replaceUrl: true });
+      },
       error: () => {
+        this.toast.error("Impossible d'enregistrer la recette.");
         this.error.set("Impossible d'enregistrer la recette.");
         this.saving.set(false);
       },

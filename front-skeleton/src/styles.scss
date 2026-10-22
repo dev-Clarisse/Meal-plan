@@ -1,4 +1,5 @@
 @import 'theme';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
 html, body { height: 100%; }
 
@@ -115,5 +116,85 @@ select:not(.form-select) {
     box-shadow: var(--shadow);
 
     .arrow { transform: translateX(-4px); }
+  }
+}
+
+.password-field {
+  position: relative;
+
+  .form-control {
+    padding-right: 48px;
+  }
+
+  .toggle {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    transform: translateY(-50%);
+    transition: color 0.2s;
+
+    &:hover:not(:disabled) {
+      background: transparent;
+      color: var(--olive);
+      box-shadow: none;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+.password-field .toggle .bi {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.form-control.is-invalid,
+.form-control.is-valid {
+  background-image: none;
+  padding-right: 0.75rem;
+}
+
+.password-field {
+  .form-control,
+  .form-control.is-invalid {
+    padding-right: 48px;
+  }
+
+  .toggle {
+    top: 0;
+    height: calc(1.5em + 1rem + 2px);
+    transform: none;
+
+    &:hover:not(:disabled) {
+      transform: none;
+    }
+  }
+}
+
+.password-field .form-control-lg ~ .toggle {
+  height: calc(1.5 * 1.25rem + 1rem + 2px);
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+
+  &.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }

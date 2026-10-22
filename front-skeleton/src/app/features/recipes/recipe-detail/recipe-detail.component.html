@@ -1,5 +1,5 @@
 <section class="container detail">
-  <a class="back" routerLink="/recettes"><span class="arrow">←</span> Mes recettes</a>
+  <app-back-link fallback="/recettes" />
 
   @if (loading()) {
     <p class="state">Chargement...</p>

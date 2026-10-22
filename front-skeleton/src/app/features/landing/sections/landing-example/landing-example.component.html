@@ -1,0 +1,36 @@
+<section class="example" aria-labelledby="example-title">
+  <div class="container example-grid">
+    <div appReveal class="text">
+      <h2 id="example-title">Le calcul, sous vos yeux</h2>
+      <p>
+        Deux recettes dans la semaine, quelques œufs au frigo. Mijoté additionne les besoins,
+        retranche le stock et vous dit exactement quoi acheter.
+      </p>
+    </div>
+
+    <div appReveal class="receipt" role="group" aria-label="Exemple de calcul pour les œufs">
+      @for (line of needs; track line.label) {
+        <p class="row">
+          <span>{{ line.label }}</span>
+          <span class="dots" aria-hidden="true"></span>
+          <span>{{ line.value }}</span>
+        </p>
+      }
+      <p class="row total">
+        <span>Besoin total</span>
+        <span class="dots" aria-hidden="true"></span>
+        <span>8 œufs</span>
+      </p>
+      <p class="row">
+        <span>Au frigo</span>
+        <span class="dots" aria-hidden="true"></span>
+        <span>− 6 œufs</span>
+      </p>
+      <p class="row result">
+        <span>À acheter</span>
+        <span class="dots" aria-hidden="true"></span>
+        <span>2 œufs</span>
+      </p>
+    </div>
+  </div>
+</section>

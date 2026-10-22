@@ -1,0 +1,17 @@
+<section class="steps" aria-labelledby="steps-title">
+  <div class="container">
+    <h2 appReveal id="steps-title" class="title">Comment ça marche</h2>
+
+    <ol class="list">
+      @for (step of steps; track step.number) {
+        <li appReveal class="step">
+          <span class="number" aria-hidden="true">{{ step.number }}</span>
+          <div class="body">
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.text }}</p>
+          </div>
+        </li>
+      }
+    </ol>
+  </div>
+</section>
