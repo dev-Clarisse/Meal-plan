@@ -30,6 +30,8 @@ export class RecipeFormComponent implements OnInit {
   readonly error = signal<string | null>(null);
   readonly saving = signal(false);
 
+  readonly sameId = (a: unknown, b: unknown) => Number(a) === Number(b);
+
   recipeId: number | null = null;
 
   readonly form = this.fb.nonNullable.group({
@@ -44,16 +46,17 @@ export class RecipeFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.ingredientService.search().subscribe((list) => this.ingredients.set(list));
-
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.recipeId = Number(id);
-      this.recipeService.findById(this.recipeId).subscribe({
-        next: (recipe) => this.fill(recipe),
-        error: () => this.error.set('Recette introuvable.'),
-      });
-    }
+    this.ingredientService.search().subscribe((list) => {
+      this.ingredients.set(list);
+      const id = this.route.snapshot.paramMap.get('id');
+      if (id) {
+        this.recipeId = Number(id);
+        this.recipeService.findById(this.recipeId).subscribe({
+          next: (recipe) => this.fill(recipe),
+          error: () => this.error.set('Recette introuvable.'),
+        });
+      }
+    });
   }
 
   addLine(): void {
