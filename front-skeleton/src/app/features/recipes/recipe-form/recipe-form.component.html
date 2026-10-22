@@ -28,27 +28,38 @@
 
     <h2>Ingrédients</h2>
     <div formArrayName="ingredients" class="lines">
-      @for (line of lines.controls; track $index) {
-        <div class="line" [formGroupName]="$index">
+      @for (line of lines.controls; track line; let i = $index) {
+        <div class="line" [formGroupName]="i">
           <select formControlName="ingredientId">
             <option [ngValue]="0" disabled>Choisir...</option>
             @for (ingredient of ingredients(); track ingredient.id) {
-              <option [value]="ingredient.id">{{ ingredient.name }}</option>
+              <option [ngValue]="ingredient.id">{{ ingredient.name }}</option>
             }
           </select>
+
           <input type="number" step="any" min="0" formControlName="quantity" />
+
           <select formControlName="unit">
             @for (unit of units; track unit) {
               <option [value]="unit">{{ unit }}</option>
             }
           </select>
-          <button type="button" class="ghost" (click)="removeLine($index)" [disabled]="lines.length === 1">
+
+          <button
+            type="button"
+            class="ghost"
+            (click)="removeLine(i)"
+            [disabled]="lines.length === 1"
+          >
             Retirer
           </button>
         </div>
       }
     </div>
-    <button type="button" class="ghost add" (click)="addLine()">+ Ajouter un ingrédient</button>
+
+    <button type="button" class="ghost add" (click)="addLine()">
+      + Ajouter un ingrédient
+    </button>
 
     @if (error()) {
       <p class="error">{{ error() }}</p>
