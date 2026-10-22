@@ -1,0 +1,24 @@
+<section class="closing" aria-labelledby="closing-title">
+  <div class="container">
+    <p appReveal id="closing-title" class="manifesto">
+      Ce qu'on a déjà,<br />
+      <em>on le cuisine.</em>
+    </p>
+
+    <div appReveal class="actions">
+      @if (isLoggedIn()) {
+        <a class="primary" routerLink="/home">Ouvrir mon carnet</a>
+      } @else {
+        <a class="primary" routerLink="/register">Créer un compte</a>
+        <a class="secondary" routerLink="/login">Se connecter</a>
+      }
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span class="brand">Mijoté</span>
+    <span class="note">Projet réalisé dans le cadre du cours Java Spring · Takima</span>
+  </div>
+</footer>
