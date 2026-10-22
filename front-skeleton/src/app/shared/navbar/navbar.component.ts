@@ -6,7 +6,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotificationBellComponent } from '../../features/notifications/notification-bell.component';
 
 const TRANSPARENT_PATHS = ['/', '/recettes'];
-import { NAV_ITEMS } from './nav-items';
+import { NAV_ITEMS } from '../navbar/nav-items';
 
 const AUTH_PATHS = ['/login', '/register'];
 
