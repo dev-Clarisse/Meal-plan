@@ -4,8 +4,9 @@
 
     @if (isLoggedIn()) {
       <nav class="links">
-        <a routerLink="/recettes" routerLinkActive="active">Recettes</a>
-        <a routerLink="/inventory" routerLinkActive="active">Inventaire</a>
+        @for (item of items; track item.path) {
+          <a [routerLink]="item.path" routerLinkActive="active">{{ item.label }}</a>
+        }
       </nav>
 
       <div class="actions">

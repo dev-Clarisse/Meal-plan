@@ -6,6 +6,8 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotificationBellComponent } from '../../features/notifications/notification-bell.component';
 
 const TRANSPARENT_PATHS = ['/', '/recettes'];
+import { NAV_ITEMS } from './nav-items';
+
 const AUTH_PATHS = ['/login', '/register'];
 
 @Component({
@@ -19,6 +21,7 @@ export class NavbarComponent {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
+  readonly items = NAV_ITEMS;
   readonly isLoggedIn = toSignal(this.authService.isLoggedIn$, { initialValue: false });
 
   readonly transparent = toSignal(
