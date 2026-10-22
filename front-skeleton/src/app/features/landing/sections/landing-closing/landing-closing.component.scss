@@ -1,0 +1,83 @@
+.closing {
+  padding: clamp(96px, 18vh, 200px) 0;
+  background: var(--olive);
+  color: #fff;
+  text-align: center;
+}
+
+.manifesto {
+  margin: 0 0 48px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.8rem, 8vw, 6.5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+
+  em {
+    color: #f0b48f;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.primary,
+.secondary {
+  padding: 14px 34px;
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  transition: background 0.25s, color 0.25s, transform 0.25s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.primary {
+  background: var(--terracotta);
+  border: 1px solid var(--terracotta);
+  color: #fff;
+
+  &:hover {
+    background: #b05a31;
+    color: #fff;
+  }
+}
+
+.secondary {
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #fff;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+  }
+}
+
+.footer {
+  padding: 28px 0;
+  background: var(--olive-dark);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  font-weight: 600;
+  color: #fff;
+}

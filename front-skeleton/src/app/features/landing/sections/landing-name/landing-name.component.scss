@@ -1,0 +1,64 @@
+.name {
+  padding: clamp(80px, 14vh, 160px) 0;
+  background: var(--bg);
+}
+
+.name-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: start;
+
+  @media (min-width: 992px) {
+    grid-template-columns: 5fr 7fr;
+    gap: 96px;
+  }
+}
+
+.entry {
+  padding-left: 24px;
+  border-left: 2px solid var(--terracotta);
+}
+
+.word {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--olive);
+}
+
+.grammar {
+  margin: 12px 0 20px;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.definition {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.6rem;
+  font-style: italic;
+  color: var(--ink);
+}
+
+.idea {
+  max-width: 560px;
+  color: var(--muted);
+  line-height: 1.8;
+
+  .lead {
+    margin-bottom: 24px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    line-height: 1.25;
+    color: var(--ink);
+
+    em {
+      color: var(--terracotta);
+    }
+  }
+}
