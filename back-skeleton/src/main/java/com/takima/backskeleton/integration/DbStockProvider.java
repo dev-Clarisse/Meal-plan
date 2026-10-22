@@ -1,12 +1,5 @@
 package com.takima.backskeleton.integration;
 
-import com.takima.backskeleton.Inventory.DAO.InventoryRepository;
-import com.takima.backskeleton.Inventory.models.Inventory;
-import com.takima.backskeleton.common.unit.Unit;
-import com.takima.backskeleton.ingredient.IngredientRepository;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.time.LocalDate;
@@ -14,6 +7,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.takima.backskeleton.Inventory.DAO.InventoryRepository;
+import com.takima.backskeleton.Inventory.models.Inventory;
+import com.takima.backskeleton.common.unit.Unit;
+import com.takima.backskeleton.ingredient.IngredientRepository;
 
 @Component
 public class DbStockProvider implements StockProvider {
@@ -42,11 +43,9 @@ public class DbStockProvider implements StockProvider {
             if (ingredientId == null) {
                 continue; // nom absent du catalogue
             }
-            Unit unit;
-            try {
-                unit = Unit.valueOf(item.getUnit().name());
-            } catch (IllegalArgumentException e) {
-                continue;
+            Unit unit = toRecipeUnit(item.getUnit());
+            if (unit == null) {
+                continue; // unité sans équivalent côté recettes (ex. CUP)
             }
             stock.merge(ingredientId, unit.toBaseUnit(item.getQuantity()), BigDecimal::add);
         }
@@ -56,5 +55,19 @@ public class DbStockProvider implements StockProvider {
     private static String normalize(String s) {
         String lower = s.trim().toLowerCase(Locale.ROOT).replace("œ", "oe");
         return Normalizer.normalize(lower, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+    }
+
+    // Deux enums Unit coexistent (inventaire et recettes) : on convertit explicitement
+    private static Unit toRecipeUnit(com.takima.backskeleton.Inventory.models.Unit u) {
+        return switch (u) {
+            case GRAM -> Unit.G;
+            case KILOGRAM -> Unit.KG;
+            case MILLILITER -> Unit.ML;
+            case LITER -> Unit.L;
+            case TEASPOON -> Unit.TSP;
+            case TABLESPOON -> Unit.TBSP;
+            case PIECE -> Unit.PIECE;
+            case CUP -> null;
+        };
     }
 }
