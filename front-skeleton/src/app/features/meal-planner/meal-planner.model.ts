@@ -68,9 +68,3 @@ export const MEAL_TYPES: { value: MealType; label: string }[] = [
   { value: 'LUNCH', label: 'Déjeuner' },
   { value: 'DINNER', label: 'Dîner' },
 ];
-
-// TEMPORAIRE : à remplacer par l'API des recettes de Leticia (GET /recipes)
-export const FAKE_RECIPES: { id: number; title: string }[] = [
-  { id: 1, title: 'Omelette' },
-  { id: 2, title: 'Gâteau' },
-];

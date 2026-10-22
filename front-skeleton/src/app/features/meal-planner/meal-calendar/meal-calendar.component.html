@@ -1,4 +1,10 @@
-<div class="container-fluid py-3">
+<header class="banner">
+  <div class="banner-inner container">
+    <h1>Planning</h1>
+  </div>
+</header>
+
+<div class="container-fluid py-4">
   <div class="d-flex align-items-center gap-3 mb-3">
     <button class="btn btn-outline-secondary btn-sm" (click)="shiftWeek(-1)">&larr; Semaine précédente</button>
     <h4 class="mb-0">Semaine du {{ weekStart | date: 'dd/MM/yyyy' }}</h4>
@@ -15,6 +21,8 @@
       <select class="form-select form-select-sm" formControlName="recipeId">
         @for (r of recipes; track r.id) {
           <option [ngValue]="r.id">{{ r.title }}</option>
+        } @empty {
+          <option [ngValue]="0" disabled>Aucune recette disponible</option>
         }
       </select>
     </div>
@@ -56,7 +64,7 @@
              cdkDropList
              [cdkDropListData]="slot(d.value, t.value)"
              (cdkDropListDropped)="drop($event)">
-          @for (m of mealsIn(d.value, t.value); track trackMeal($index, m)) {
+          @for (m of mealsIn(d.value, t.value); track m.id) {
             <div class="meal" cdkDrag [cdkDragData]="m">
               {{ recipeTitle(m.recipeId) }}
               <small class="d-block">{{ m.servings }} portions</small>

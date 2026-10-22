@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import {
   AddMealRequest, Meal, MealPlan, MissingIngredient,
   MoveMealRequest, ShoppingItem, ShoppingList,
@@ -8,10 +9,8 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class MealPlannerService {
-  // TODO : déplacer dans environment.ts quand l'équipe aura décidé de la config
-  private readonly baseUrl = 'http://localhost:8085/api/v1';
-
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiUrl}/v1`;
 
   getWeek(isoDate: string): Observable<MealPlan> {
     return this.http.get<MealPlan>(`${this.baseUrl}/meal-plans/${isoDate}`);

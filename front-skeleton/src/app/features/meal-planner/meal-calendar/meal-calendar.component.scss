@@ -1,3 +1,27 @@
+.banner {
+  height: 260px;
+  display: flex;
+  align-items: flex-end;
+  background:
+    linear-gradient(180deg, rgba(14, 18, 15, 0.55) 0%, rgba(14, 18, 15, 0.35) 50%, rgba(14, 18, 15, 0.6) 100%),
+    url('/assets/banner-planning.jpg') center / cover no-repeat,
+    #2f4a3a;
+}
+
+.banner-inner {
+  padding-bottom: 48px;
+
+  h1 {
+    margin: 0;
+    color: #fff;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+
 .calendar {
   display: grid;
   grid-template-columns: 110px repeat(7, minmax(120px, 1fr));

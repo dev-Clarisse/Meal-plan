@@ -58,5 +58,12 @@ export const routes: Routes = [
       import('./features/recipes/recipe-detail/recipe-detail.component').then((m) => m.RecipeDetailComponent),
   },
 
+  {
+    path: 'planning',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/meal-planner/meal-calendar/meal-calendar.component').then((m) => m.MealCalendarComponent),
+  },
+
   { path: '**', redirectTo: 'login' },
 ];

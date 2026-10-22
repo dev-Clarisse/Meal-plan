@@ -1,18 +1,19 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, inject } from '@angular/core';
 import { ShoppingItem, ShoppingList } from '../meal-planner.model';
 import { MealPlannerService } from '../meal-planner.service';
 
 @Component({
   selector: 'app-shopping-list',
+  standalone: true,
   templateUrl: './shopping-list.component.html',
 })
 export class ShoppingListComponent implements OnChanges {
+  private readonly service = inject(MealPlannerService);
+
   @Input({ required: true }) planId!: number;
 
   list: ShoppingList | null = null;
   error = '';
-
-  constructor(private service: MealPlannerService) {}
 
   ngOnChanges(): void {
     this.list = null;

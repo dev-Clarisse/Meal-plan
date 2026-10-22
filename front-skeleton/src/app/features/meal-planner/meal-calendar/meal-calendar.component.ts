@@ -1,8 +1,13 @@
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { DAYS, DayOfWeek, FAKE_RECIPES, MEAL_TYPES, Meal, MealPlan, MealType, MissingIngredient } from '../meal-planner.model';
+import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
+import { DatePipe } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Recipe } from '../../recipes/models/recipe.model';
+import { RecipeService } from '../../recipes/services/recipe.service';
+import { ToastService } from '../../../shared/toast/toast.service';
+import { DAYS, DayOfWeek, MEAL_TYPES, Meal, MealPlan, MealType, MissingIngredient } from '../meal-planner.model';
 import { MealPlannerService } from '../meal-planner.service';
+import { ShoppingListComponent } from '../shopping-list/shopping-list.component';
 
 export interface Slot {
   day: DayOfWeek;
@@ -21,33 +26,52 @@ function mondayOf(d: Date): Date {
   return c;
 }
 
+// Le backend plafonne la taille de page à 50 : suffisant pour le sélecteur du planning
+const RECIPE_PAGE_SIZE = 50;
+
 @Component({
   selector: 'app-meal-calendar',
+  standalone: true,
+  imports: [DatePipe, ReactiveFormsModule, CdkDropListGroup, CdkDropList, CdkDrag, ShoppingListComponent],
   templateUrl: './meal-calendar.component.html',
   styleUrls: ['./meal-calendar.component.scss'],
 })
 export class MealCalendarComponent implements OnInit {
+  private readonly service = inject(MealPlannerService);
+  private readonly recipeService = inject(RecipeService);
+  private readonly toast = inject(ToastService);
+
   readonly days = DAYS;
   readonly mealTypes = MEAL_TYPES;
-  readonly recipes = FAKE_RECIPES;
+  recipes: Recipe[] = [];
 
   weekStart = mondayOf(new Date());
   plan?: MealPlan;
   error = '';
   missing: MissingIngredient[] | null = null;
-  form;
 
-  constructor(private service: MealPlannerService, fb: FormBuilder) {
-    this.form = fb.nonNullable.group({
-      recipeId: [1, Validators.required],
-      dayOfWeek: ['MONDAY' as DayOfWeek, Validators.required],
-      mealType: ['LUNCH' as MealType, Validators.required],
-      servings: [4, [Validators.required, Validators.min(1)]],
-    });
-  }
+  readonly form = inject(FormBuilder).nonNullable.group({
+    recipeId: [0, [Validators.required, Validators.min(1)]],
+    dayOfWeek: ['MONDAY' as DayOfWeek, Validators.required],
+    mealType: ['LUNCH' as MealType, Validators.required],
+    servings: [4, [Validators.required, Validators.min(1)]],
+  });
 
   ngOnInit(): void {
+    this.loadRecipes();
     this.loadWeek();
+  }
+
+  loadRecipes(): void {
+    this.recipeService.search('', 0, RECIPE_PAGE_SIZE).subscribe({
+      next: (page) => {
+        this.recipes = page.content;
+        if (this.recipes.length > 0 && this.form.controls.recipeId.value === 0) {
+          this.form.patchValue({ recipeId: this.recipes[0].id, servings: this.recipes[0].servings });
+        }
+      },
+      error: () => this.toast.error('Impossible de charger les recettes'),
+    });
   }
 
   loadWeek(): void {
@@ -80,10 +104,6 @@ export class MealCalendarComponent implements OnInit {
     return { day, type };
   }
 
-  trackMeal(_: number, meal: Meal): number {
-    return meal.id;
-  }
-
   recipeTitle(recipeId: number): string {
     return this.recipes.find((r) => r.id === recipeId)?.title ?? `Recette ${recipeId}`;
   }
@@ -95,9 +115,10 @@ export class MealCalendarComponent implements OnInit {
     this.service.addMeal(this.plan.id, this.form.getRawValue()).subscribe({
       next: (meal) => {
         this.plan!.meals = [...this.plan!.meals, meal];
+        this.toast.success(`${this.recipeTitle(meal.recipeId)} ajouté au planning`);
         this.refreshMissingIfShown();
       },
-      error: () => (this.error = "Impossible d'ajouter le repas"),
+      error: () => this.toast.error("Impossible d'ajouter le repas"),
     });
   }
 
@@ -107,6 +128,7 @@ export class MealCalendarComponent implements OnInit {
     if (meal.dayOfWeek === target.day && meal.mealType === target.type) {
       return;
     }
+    // Mise à jour optimiste : on annule si le serveur refuse
     const previous = { day: meal.dayOfWeek, type: meal.mealType };
     meal.dayOfWeek = target.day;
     meal.mealType = target.type;
@@ -116,7 +138,7 @@ export class MealCalendarComponent implements OnInit {
       error: () => {
         meal.dayOfWeek = previous.day;
         meal.mealType = previous.type;
-        this.error = 'Déplacement refusé par le serveur';
+        this.toast.error('Déplacement refusé par le serveur');
       },
     });
   }
@@ -127,7 +149,7 @@ export class MealCalendarComponent implements OnInit {
     }
     this.service.getMissing(this.plan.id).subscribe({
       next: (m) => (this.missing = m),
-      error: () => (this.error = 'Calcul des manquants impossible'),
+      error: () => this.toast.error('Calcul des manquants impossible'),
     });
   }
 
