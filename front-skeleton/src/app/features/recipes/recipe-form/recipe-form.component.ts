@@ -5,6 +5,7 @@ import { Ingredient } from '../models/ingredient.model';
 import { Recipe, RecipeRequest, Unit } from '../models/recipe.model';
 import { IngredientService } from '../services/ingredient.service';
 import { BackLinkComponent } from '../../../shared/back-link/back-link.component';
+import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
 import { RecipeService } from '../services/recipe.service';
 
 @Component({
@@ -18,6 +19,7 @@ export class RecipeFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly confirmService = inject(ConfirmService);
   private readonly recipeService = inject(RecipeService);
   private readonly ingredientService = inject(IngredientService);
 
@@ -62,7 +64,7 @@ export class RecipeFormComponent implements OnInit {
     }
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -78,6 +80,18 @@ export class RecipeFormComponent implements OnInit {
         unit: line.unit as Unit,
       })),
     };
+
+    const editing = this.recipeId !== null;
+    const confirmed = await this.confirmService.ask({
+      title: editing ? 'Enregistrer les modifications ?' : 'Créer la recette ?',
+      message: editing
+        ? 'La recette sera mise à jour avec ces informations.'
+        : 'La nouvelle recette sera ajoutée à votre carnet.',
+      confirmLabel: editing ? 'Enregistrer' : 'Créer',
+    });
+    if (!confirmed) {
+      return;
+    }
 
     this.saving.set(true);
     this.error.set(null);
