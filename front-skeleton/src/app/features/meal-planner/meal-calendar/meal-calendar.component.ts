@@ -7,6 +7,7 @@ import { RecipeService } from '../../recipes/services/recipe.service';
 import { ToastService } from '../../../shared/toast/toast.service';
 import { DAYS, DayOfWeek, MEAL_TYPES, Meal, MealPlan, MealType, MissingIngredient } from '../meal-planner.model';
 import { MealPlannerService } from '../meal-planner.service';
+import { QuantityPipe } from '../quantity.pipe';
 import { ShoppingListComponent } from '../shopping-list/shopping-list.component';
 
 export interface Slot {
@@ -32,7 +33,7 @@ const RECIPE_PAGE_SIZE = 50;
 @Component({
   selector: 'app-meal-calendar',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule, CdkDropListGroup, CdkDropList, CdkDrag, ShoppingListComponent],
+  imports: [DatePipe, ReactiveFormsModule, CdkDropListGroup, CdkDropList, CdkDrag, QuantityPipe, ShoppingListComponent],
   templateUrl: './meal-calendar.component.html',
   styleUrls: ['./meal-calendar.component.scss'],
 })

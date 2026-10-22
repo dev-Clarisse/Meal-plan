@@ -18,7 +18,7 @@
             <label>
               <input type="checkbox" [checked]="item.purchased" (change)="toggle(item)" />
               <span [class.text-decoration-line-through]="item.purchased">
-                {{ item.name }} : {{ item.quantity }} {{ item.unit }}
+                {{ item.name }} : {{ item.quantity | quantity: item.unit }}
               </span>
             </label>
           </li>

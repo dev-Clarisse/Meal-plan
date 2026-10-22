@@ -1,10 +1,12 @@
 import { Component, Input, OnChanges, inject } from '@angular/core';
 import { ShoppingItem, ShoppingList } from '../meal-planner.model';
 import { MealPlannerService } from '../meal-planner.service';
+import { QuantityPipe } from '../quantity.pipe';
 
 @Component({
   selector: 'app-shopping-list',
   standalone: true,
+  imports: [QuantityPipe],
   templateUrl: './shopping-list.component.html',
 })
 export class ShoppingListComponent implements OnChanges {

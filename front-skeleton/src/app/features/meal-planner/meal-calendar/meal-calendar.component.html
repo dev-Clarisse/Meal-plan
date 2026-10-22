@@ -86,7 +86,7 @@
       } @else {
         <ul class="mt-2">
           @for (m of missing; track m.ingredientId) {
-            <li>{{ m.name }} : {{ m.quantity }} {{ m.unit }}</li>
+            <li>{{ m.name }} : {{ m.quantity | quantity: m.unit }}</li>
           }
         </ul>
       }
