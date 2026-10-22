@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -35,9 +37,11 @@ class InventoryControllerTest {
     @Autowired ObjectMapper objectMapper;
 
     @MockBean InventoryService service;
-    @MockBean UserRepository userRepository;  
+    @MockBean UserRepository userRepository;
 
-    private static final String EMAIL = "user@test.com";
+   
+    private static final UUID USER_ID = UUID.randomUUID();
+    private static final String SUBJECT = USER_ID.toString();
 
     private InventoryResponse sampleResponse() {
         return new InventoryResponse(
@@ -49,10 +53,10 @@ class InventoryControllerTest {
 
     @Test
     void list_shouldReturnItems() throws Exception {
-        when(service.listForUser(EMAIL)).thenReturn(List.of(sampleResponse()));
+        when(service.listForUser(USER_ID)).thenReturn(List.of(sampleResponse()));
 
         mockMvc.perform(get("/api/inventory")
-                .with(jwt().jwt(j -> j.subject(EMAIL))))
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].name").value("Lait"))
             .andExpect(jsonPath("$[0].unit").value("LITER"))
@@ -75,10 +79,10 @@ class InventoryControllerTest {
             LocalDate.now().plusDays(3), InventoryResponse.ExpiryStatus.EXPIRING_SOON,
             Instant.now(), Instant.now()
         );
-        when(service.create(eq(EMAIL), any(InventoryRequest.class))).thenReturn(resp);
+        when(service.create(eq(USER_ID), any(InventoryRequest.class))).thenReturn(resp);
 
         mockMvc.perform(post("/api/inventory")
-                .with(jwt().jwt(j -> j.subject(EMAIL)))
+                .with(jwt().jwt(j -> j.subject(SUBJECT)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
             .andExpect(status().isCreated())
@@ -91,7 +95,7 @@ class InventoryControllerTest {
         InventoryRequest invalid = new InventoryRequest("", new BigDecimal("1"), Unit.PIECE, null);
 
         mockMvc.perform(post("/api/inventory")
-                .with(jwt().jwt(j -> j.subject(EMAIL)))
+                .with(jwt().jwt(j -> j.subject(SUBJECT)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalid)))
             .andExpect(status().isBadRequest());
@@ -103,11 +107,11 @@ class InventoryControllerTest {
         InventoryRequest req = new InventoryRequest(
             "Lait entier", new BigDecimal("2"), Unit.LITER, LocalDate.now().plusDays(3)
         );
-        when(service.update(eq(EMAIL), eq(id), any(InventoryRequest.class)))
+        when(service.update(eq(USER_ID), eq(id), any(InventoryRequest.class)))
             .thenReturn(sampleResponse());
 
         mockMvc.perform(put("/api/inventory/{id}", id)
-                .with(jwt().jwt(j -> j.subject(EMAIL)))
+                .with(jwt().jwt(j -> j.subject(SUBJECT)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
             .andExpect(status().isOk());
@@ -118,18 +122,29 @@ class InventoryControllerTest {
         UUID id = UUID.randomUUID();
 
         mockMvc.perform(delete("/api/inventory/{id}", id)
-                .with(jwt().jwt(j -> j.subject(EMAIL))))
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
             .andExpect(status().isNoContent());
     }
 
     @Test
-    void delete_shouldReturn403WhenNotOwned() throws Exception {
+    void delete_shouldReturn404WhenNotFoundOrNotOwned() throws Exception {
         UUID id = UUID.randomUUID();
-        doThrow(new AccessDeniedException("not yours"))
-            .when(service).delete(EMAIL, id);
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Inventory item not found"))
+            .when(service).delete(USER_ID, id);
 
         mockMvc.perform(delete("/api/inventory/{id}", id)
-                .with(jwt().jwt(j -> j.subject(EMAIL))))
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void delete_shouldReturn403WhenAccessDenied() throws Exception {
+        UUID id = UUID.randomUUID();
+        doThrow(new AccessDeniedException("denied"))
+            .when(service).delete(USER_ID, id);
+
+        mockMvc.perform(delete("/api/inventory/{id}", id)
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
             .andExpect(status().isForbidden());
     }
 }

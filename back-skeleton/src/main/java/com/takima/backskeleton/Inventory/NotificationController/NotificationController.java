@@ -18,23 +18,27 @@ public class NotificationController {
 
     public NotificationController(NotificationService service) { this.service = service; }
 
+    private static UUID userId(Jwt jwt) {
+        return UUID.fromString(jwt.getSubject());
+    }
+
     @GetMapping
     public List<NotificationResponse> list(@AuthenticationPrincipal Jwt jwt) {
-        return service.listForUser(jwt.getSubject());
+        return service.listForUser(userId(jwt));
     }
 
     @GetMapping("/unread-count")
     public Map<String, Long> unreadCount(@AuthenticationPrincipal Jwt jwt) {
-        return Map.of("count", service.unreadCount(jwt.getSubject()));
+        return Map.of("count", service.unreadCount(userId(jwt)));
     }
 
     @PostMapping("/{id}/read")
     public void markAsRead(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID id) {
-        service.markAsRead(jwt.getSubject(), id);
+        service.markAsRead(userId(jwt), id);
     }
 
     @PostMapping("/read-all")
     public void markAllAsRead(@AuthenticationPrincipal Jwt jwt) {
-        service.markAllAsRead(jwt.getSubject());
+        service.markAllAsRead(userId(jwt));
     }
 }
