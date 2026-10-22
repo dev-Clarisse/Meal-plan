@@ -36,19 +36,30 @@
               <option [ngValue]="ingredient.id">{{ ingredient.name }}</option>
             }
           </select>
+
           <input type="number" step="any" min="0" formControlName="quantity" />
+
           <select formControlName="unit">
             @for (unit of units; track unit) {
               <option [value]="unit">{{ unit }}</option>
             }
           </select>
-          <button type="button" class="ghost" (click)="removeLine($index)" [disabled]="lines.length === 1">
+
+          <button
+            type="button"
+            class="ghost"
+            (click)="removeLine(i)"
+            [disabled]="lines.length === 1"
+          >
             Retirer
           </button>
         </div>
       }
     </div>
-    <button type="button" class="ghost add" (click)="addLine()">+ Ajouter un ingrédient</button>
+
+    <button type="button" class="ghost add" (click)="addLine()">
+      + Ajouter un ingrédient
+    </button>
 
     @if (error()) {
       <p class="error">{{ error() }}</p>
