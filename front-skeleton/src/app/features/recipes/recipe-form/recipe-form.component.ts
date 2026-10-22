@@ -4,12 +4,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Ingredient } from '../models/ingredient.model';
 import { Recipe, RecipeRequest, Unit } from '../models/recipe.model';
 import { IngredientService } from '../services/ingredient.service';
+import { BackLinkComponent } from '../../../shared/back-link/back-link.component';
 import { RecipeService } from '../services/recipe.service';
 
 @Component({
   selector: 'app-recipe-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [BackLinkComponent, ReactiveFormsModule, RouterLink],
   templateUrl: './recipe-form.component.html',
   styleUrl: './recipe-form.component.scss',
 })
@@ -86,7 +87,7 @@ export class RecipeFormComponent implements OnInit {
         : this.recipeService.update(this.recipeId, request);
 
     call.subscribe({
-      next: (saved) => this.router.navigate(['/recettes', saved.id]),
+      next: (saved) => this.router.navigate(['/recettes', saved.id], { replaceUrl: true }),
       error: () => {
         this.error.set("Impossible d'enregistrer la recette.");
         this.saving.set(false);
