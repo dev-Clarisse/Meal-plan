@@ -1,5 +1,5 @@
 <section class="container form-page">
-  <a class="back" routerLink="/recettes"><span class="arrow">←</span> Mes recettes</a>
+  <app-back-link fallback="/recettes" />
 
   <header class="head">
     <h1>{{ recipeId === null ? 'Nouvelle recette' : 'Modifier la recette' }}</h1>

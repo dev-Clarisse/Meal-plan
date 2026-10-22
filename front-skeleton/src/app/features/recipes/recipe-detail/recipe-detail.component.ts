@@ -1,12 +1,13 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Recipe } from '../models/recipe.model';
+import { BackLinkComponent } from '../../../shared/back-link/back-link.component';
 import { RecipeService } from '../services/recipe.service';
 
 @Component({
   selector: 'app-recipe-detail',
   standalone: true,
-  imports: [RouterLink],
+  imports: [BackLinkComponent, RouterLink],
   templateUrl: './recipe-detail.component.html',
   styleUrl: './recipe-detail.component.scss',
 })
