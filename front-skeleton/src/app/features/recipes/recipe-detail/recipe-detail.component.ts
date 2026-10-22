@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Recipe } from '../models/recipe.model';
 import { BackLinkComponent } from '../../../shared/back-link/back-link.component';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
+import { ToastService } from '../../../shared/toast/toast.service';
 import { RecipeService } from '../services/recipe.service';
 
 @Component({
@@ -16,6 +17,7 @@ export class RecipeDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly confirmService = inject(ConfirmService);
+  private readonly toast = inject(ToastService);
   private readonly recipeService = inject(RecipeService);
 
   readonly recipe = signal<Recipe | null>(null);
@@ -48,7 +50,13 @@ export class RecipeDetailComponent implements OnInit {
       tone: 'danger',
     });
     if (confirmed) {
-      this.recipeService.delete(current.id).subscribe(() => this.router.navigate(['/recettes']));
+      this.recipeService.delete(current.id).subscribe({
+        next: () => {
+          this.toast.success('Recette supprimée.');
+          this.router.navigate(['/recettes']);
+        },
+        error: () => this.toast.error('Impossible de supprimer la recette.'),
+      });
     }
   }
 }

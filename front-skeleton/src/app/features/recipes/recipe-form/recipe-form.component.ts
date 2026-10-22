@@ -6,6 +6,7 @@ import { Recipe, RecipeRequest, Unit } from '../models/recipe.model';
 import { IngredientService } from '../services/ingredient.service';
 import { BackLinkComponent } from '../../../shared/back-link/back-link.component';
 import { ConfirmService } from '../../../shared/confirm-dialog/confirm.service';
+import { ToastService } from '../../../shared/toast/toast.service';
 import { RecipeService } from '../services/recipe.service';
 
 @Component({
@@ -20,6 +21,7 @@ export class RecipeFormComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly confirmService = inject(ConfirmService);
+  private readonly toast = inject(ToastService);
   private readonly recipeService = inject(RecipeService);
   private readonly ingredientService = inject(IngredientService);
 
@@ -101,8 +103,12 @@ export class RecipeFormComponent implements OnInit {
         : this.recipeService.update(this.recipeId, request);
 
     call.subscribe({
-      next: (saved) => this.router.navigate(['/recettes', saved.id], { replaceUrl: true }),
+      next: (saved) => {
+        this.toast.success(editing ? 'Recette modifiée.' : 'Recette créée.');
+        this.router.navigate(['/recettes', saved.id], { replaceUrl: true });
+      },
       error: () => {
+        this.toast.error("Impossible d'enregistrer la recette.");
         this.error.set("Impossible d'enregistrer la recette.");
         this.saving.set(false);
       },
