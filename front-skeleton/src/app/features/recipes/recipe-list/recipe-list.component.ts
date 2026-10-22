@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Recipe } from '../models/recipe.model';
@@ -13,6 +14,7 @@ import { RecipeService } from '../services/recipe.service';
 })
 export class RecipeListComponent implements OnInit {
   private readonly recipeService = inject(RecipeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly recipes = signal<Recipe[]>([]);
   readonly page = signal(0);
@@ -44,7 +46,10 @@ export class RecipeListComponent implements OnInit {
   private load(): void {
     this.loading.set(true);
     this.error.set(null);
-    this.recipeService.search(this.title, this.page(), this.pageSize).subscribe({
+    const request$ = this.recipeService
+      .search(this.title, this.page(), this.pageSize)
+      .pipe(takeUntilDestroyed(this.destroyRef));
+    request$.subscribe({
       next: (result) => {
         this.recipes.set(result.content);
         this.totalPages.set(result.totalPages);
