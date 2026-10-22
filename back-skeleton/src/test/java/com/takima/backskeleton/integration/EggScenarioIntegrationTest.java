@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,5 +102,15 @@ class EggScenarioIntegrationTest {
 
         ShoppingListDto list = shoppingListService.generate(plan.id(), userId);
         assertTrue(list.empty());
+    }
+
+    @Test
+    void addMeal_with_unknown_recipe_is_rejected() {
+        User user = userRepository.save(
+                new User("unknown-" + UUID.randomUUID() + "@test.com", "hash", java.time.Instant.now()));
+        MealPlanDto plan = mealPlanService.getOrCreate(user.getId(), LocalDate.of(2026, 11, 9));
+
+        assertThrows(NoSuchElementException.class, () -> mealPlanService.addMeal(plan.id(), user.getId(),
+                new AddMealRequest(999_999L, DayOfWeek.MONDAY, MealType.LUNCH, 2)));
     }
 }
