@@ -27,15 +27,21 @@
     </label>
 
     <h2>Ingrédients</h2>
+    <datalist id="ingredient-options">
+      @for (ingredient of ingredients(); track ingredient.id) {
+      <option [value]="ingredient.name"></option>
+      }
+    </datalist>
     <div formArrayName="ingredients" class="lines">
       @for (line of lines.controls; track line; let i = $index) {
       <div class="line" [formGroupName]="i">
-        <select formControlName="ingredientId" [compareWith]="sameId">
-          <option [ngValue]="0" disabled>Choisir...</option>
-          @for (ingredient of ingredients(); track ingredient.id) {
-          <option [ngValue]="ingredient.id">{{ ingredient.name }}</option>
-          }
-        </select>
+        <input
+          type="text"
+          list="ingredient-options"
+          placeholder="Choisir..."
+          [value]="ingredientName(line)"
+          (change)="selectIngredient(line, $event)"
+        />
 
         <input type="number" step="any" min="0" formControlName="quantity" />
 

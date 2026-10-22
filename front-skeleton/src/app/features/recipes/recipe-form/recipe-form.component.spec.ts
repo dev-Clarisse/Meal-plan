@@ -75,11 +75,31 @@ describe('RecipeFormComponent', () => {
     expect(component.recipeId).toBeNull();
   });
 
-  it('lists the catalog ingredients and a placeholder in the ingredient select', () => {
+  it('offers the catalog ingredients as suggestions', () => {
     create();
 
-    const select = page().querySelector('.line select') as HTMLSelectElement;
-    expect(select.options.length).toBe(ingredients.length + 1);
+    expect(page().querySelectorAll('datalist option').length).toBe(ingredients.length);
+  });
+
+  it('sets the ingredient id when a catalog name is typed', () => {
+    create();
+    const field = page().querySelector('.line input[list]') as HTMLInputElement;
+
+    field.value = 'milk';
+    field.dispatchEvent(new Event('change'));
+
+    expect(component.lines.at(0).get('ingredientId')?.value).toBe(2);
+  });
+
+  it('resets the ingredient id when the typed name is unknown', () => {
+    create();
+    component.lines.at(0).patchValue({ ingredientId: 1 });
+    const field = page().querySelector('.line input[list]') as HTMLInputElement;
+
+    field.value = 'unknown';
+    field.dispatchEvent(new Event('change'));
+
+    expect(component.lines.at(0).get('ingredientId')?.value).toBe(0);
   });
 
   it('adds a line when clicking the add button', () => {
