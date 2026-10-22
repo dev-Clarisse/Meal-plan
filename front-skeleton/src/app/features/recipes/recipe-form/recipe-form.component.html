@@ -28,32 +28,27 @@
 
     <h2>Ingrédients</h2>
     <div formArrayName="ingredients" class="lines">
-      @for (line of lines.controls; track line) {
-        <div class="line" [formGroupName]="$index">
-          <select formControlName="ingredientId" [compareWith]="sameId">
-            <option [ngValue]="0" disabled>Choisir...</option>
-            @for (ingredient of ingredients(); track ingredient.id) {
-              <option [ngValue]="ingredient.id">{{ ingredient.name }}</option>
-            }
-          </select>
+      @for (line of lines.controls; track line; let i = $index) {
+      <div class="line" [formGroupName]="i">
+        <select formControlName="ingredientId" [compareWith]="sameId">
+          <option [ngValue]="0" disabled>Choisir...</option>
+          @for (ingredient of ingredients(); track ingredient.id) {
+          <option [ngValue]="ingredient.id">{{ ingredient.name }}</option>
+          }
+        </select>
 
-          <input type="number" step="any" min="0" formControlName="quantity" />
+        <input type="number" step="any" min="0" formControlName="quantity" />
 
-          <select formControlName="unit">
-            @for (unit of units; track unit) {
-              <option [value]="unit">{{ unit }}</option>
-            }
-          </select>
+        <select formControlName="unit">
+          @for (unit of units; track unit) {
+          <option [value]="unit">{{ unit }}</option>
+          }
+        </select>
 
-          <button
-            type="button"
-            class="ghost"
-            (click)="removeLine(i)"
-            [disabled]="lines.length === 1"
-          >
-            Retirer
-          </button>
-        </div>
+        <button type="button" class="ghost" (click)="removeLine(i)" [disabled]="lines.length === 1">
+          Retirer
+        </button>
+      </div>
       }
     </div>
 
@@ -62,7 +57,7 @@
     </button>
 
     @if (error()) {
-      <p class="error">{{ error() }}</p>
+    <p class="error">{{ error() }}</p>
     }
 
     <div class="actions">
