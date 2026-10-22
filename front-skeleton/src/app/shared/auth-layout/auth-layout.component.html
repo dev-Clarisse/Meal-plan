@@ -1,0 +1,17 @@
+<main class="layout">
+  <section class="form-side">
+    <a class="brand" routerLink="/">Mijoté</a>
+    <div class="form-wrap">
+      <h1>{{ title }}</h1>
+      @if (subtitle) {
+        <p class="subtitle">{{ subtitle }}</p>
+      }
+      <ng-content />
+    </div>
+  </section>
+
+  <aside class="art-side" aria-hidden="true">
+    <p class="quote">Ce qu'on a déjà,<br /><em>on le cuisine.</em></p>
+    <p class="tagline">Vos recettes, votre frigo et votre semaine, enfin réunis.</p>
+  </aside>
+</main>

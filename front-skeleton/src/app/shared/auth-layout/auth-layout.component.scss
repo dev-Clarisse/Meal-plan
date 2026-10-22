@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 100vh;
+
+  @media (min-width: 992px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-side {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 24px 48px;
+  background: var(--bg);
+}
+
+.brand {
+  position: absolute;
+  top: 0;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  height: 68px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.6rem;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--olive);
+
+  &:hover {
+    color: var(--olive);
+  }
+}
+
+.form-wrap {
+  width: 100%;
+  max-width: 420px;
+
+  h1 {
+    margin: 0 0 8px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(2.4rem, 5vw, 3.2rem);
+    font-weight: 600;
+    color: var(--olive);
+  }
+}
+
+.subtitle {
+  margin: 0 0 32px;
+  color: var(--muted);
+}
+
+.art-side {
+  display: none;
+
+  @media (min-width: 992px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 64px;
+    background:
+      linear-gradient(rgba(34, 55, 41, 0.78), rgba(34, 55, 41, 0.78)),
+      url('/assets/auth-side.jpg') center / cover no-repeat,
+      var(--olive);
+    color: #fff;
+  }
+}
+
+.quote {
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+
+  em {
+    color: #f0b48f;
+  }
+}
+
+.tagline {
+  margin: 0;
+  max-width: 320px;
+  padding-left: 20px;
+  border-left: 2px solid #f0b48f;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1.35;
+}
