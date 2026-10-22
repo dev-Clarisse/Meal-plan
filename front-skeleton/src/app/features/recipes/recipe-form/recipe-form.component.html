@@ -28,12 +28,12 @@
 
     <h2>Ingrédients</h2>
     <div formArrayName="ingredients" class="lines">
-      @for (line of lines.controls; track $index) {
+      @for (line of lines.controls; track line) {
         <div class="line" [formGroupName]="$index">
-          <select formControlName="ingredientId">
+          <select formControlName="ingredientId" [compareWith]="sameId">
             <option [ngValue]="0" disabled>Choisir...</option>
             @for (ingredient of ingredients(); track ingredient.id) {
-              <option [value]="ingredient.id">{{ ingredient.name }}</option>
+              <option [ngValue]="ingredient.id">{{ ingredient.name }}</option>
             }
           </select>
           <input type="number" step="any" min="0" formControlName="quantity" />
