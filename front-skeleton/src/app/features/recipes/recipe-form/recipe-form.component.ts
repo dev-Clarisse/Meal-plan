@@ -1,6 +1,6 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Ingredient } from '../models/ingredient.model';
 import { Recipe, RecipeRequest, Unit } from '../models/recipe.model';
@@ -31,8 +31,6 @@ export class RecipeFormComponent implements OnInit {
   readonly ingredients = signal<Ingredient[]>([]);
   readonly error = signal<string | null>(null);
   readonly saving = signal(false);
-
-  readonly sameId = (a: unknown, b: unknown) => Number(a) === Number(b);
 
   recipeId: number | null = null;
 
@@ -72,6 +70,17 @@ export class RecipeFormComponent implements OnInit {
     if (this.lines.length > 1) {
       this.lines.removeAt(index);
     }
+  }
+
+  ingredientName(line: AbstractControl): string {
+    const id = Number(line.get('ingredientId')?.value);
+    return this.ingredients().find((ingredient) => ingredient.id === id)?.name ?? '';
+  }
+
+  selectIngredient(line: AbstractControl, event: Event): void {
+    const name = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    const match = this.ingredients().find((ingredient) => ingredient.name.toLowerCase() === name);
+    line.get('ingredientId')?.setValue(match?.id ?? 0);
   }
 
   async submit(): Promise<void> {
