@@ -338,9 +338,24 @@ ollama serve
 
 Les réponses du modèle sont des brouillons : l'utilisateur les relit et les modifie avant d'enregistrer.
 
-### Outil d'aide au développement
+### Skill pour un outil de code IA
 
-Un assistant de code IA a servi à guider la conception, à écrire et relire le code et les tests, et à rédiger la documentation. Toutes les contributions ont été relues, exécutées et validées par l'équipe, et les décisions d'architecture restent celles de l'équipe.
+Le dossier `skills/add-front-page/` contient un skill conçu avec la méthode Gechev. Il décrit à une IA de code comment ajouter une page protégée au front : dossier de feature, route avec `authGuard` et entrée dans la barre de navigation.
+
+Le skill a été validé en quatre étapes avec une IA :
+
+| Étape | Objectif | Résultat |
+|---|---|---|
+| 1. Découverte | Vérifier que la description déclenche le skill au bon moment | Ajout d'une exclusion pour le simple lien de navigation |
+| 2. Logique | Parcourir chaque étape et repérer les contradictions | Vérifications placées avant toute création, fichiers du composant précisés, valeurs par défaut ajoutées |
+| 3. Cas limites | Tester les doublons, la langue des noms, les erreurs de build et les pages publiques | Build de référence, normalisation du nom, pages publiques exclues |
+| 4. Affinage | Supprimer les redondances et les incohérences | `npm ci` à la place de `npm install`, version finale plus courte |
+
+[Conversation de validation](https://claude.ai/share/c76adc79-4ebc-4c01-b6c1-d5fd6c831d23)
+
+### Assistant de code pour le développement
+
+Un assistant de code IA a servi à guider la conception, à écrire et relire le code et les tests, et à rédiger la documentation. Toutes les contributions ont été relues, exécutées et validées par l'équipe.
 
 ## Dépannage
 
