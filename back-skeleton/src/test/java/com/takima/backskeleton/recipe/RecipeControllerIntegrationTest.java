@@ -53,7 +53,7 @@ class RecipeControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.ingredients[0].ingredientName").value("Pasta"))
+                .andExpect(jsonPath("$.ingredients[0].ingredientName").value("Pâtes"))
                 .andReturn().getResponse().getContentAsString();
 
         String id = response.replaceAll(".*?\"id\":(\\d+).*", "$1");
