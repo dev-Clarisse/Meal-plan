@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Ingredient } from '../models/ingredient.model';
@@ -24,6 +25,7 @@ export class RecipeFormComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly recipeService = inject(RecipeService);
   private readonly ingredientService = inject(IngredientService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly units: Unit[] = ['G', 'KG', 'ML', 'L', 'TSP', 'TBSP', 'PIECE'];
   readonly ingredients = signal<Ingredient[]>([]);
@@ -46,12 +48,15 @@ export class RecipeFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.ingredientService.search().subscribe((list) => {
+    this.ingredientService.search().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((list) => {
       this.ingredients.set(list);
       const id = this.route.snapshot.paramMap.get('id');
       if (id) {
         this.recipeId = Number(id);
-        this.recipeService.findById(this.recipeId).subscribe({
+        this.recipeService
+          .findById(this.recipeId)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
           next: (recipe) => this.fill(recipe),
           error: () => this.error.set('Recette introuvable.'),
         });
