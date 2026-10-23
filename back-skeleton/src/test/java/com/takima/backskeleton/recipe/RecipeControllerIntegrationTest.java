@@ -27,7 +27,7 @@ class RecipeControllerIntegrationTest {
     void searchesRecipesByTitle() throws Exception {
         mockMvc.perform(get("/api/v1/recipes").with(jwt()).param("title", "ome"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].title").value("Omelette"))
+                .andExpect(jsonPath("$.content[0].title").value("Omelette nature"))
                 .andExpect(jsonPath("$.content[0].ingredients.length()").value(2));
     }
 
@@ -35,7 +35,7 @@ class RecipeControllerIntegrationTest {
     void returnsRecipeDetail() throws Exception {
         mockMvc.perform(get("/api/v1/recipes/1").with(jwt()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Omelette"));
+                .andExpect(jsonPath("$.title").value("Omelette nature"));
     }
 
     @Test
