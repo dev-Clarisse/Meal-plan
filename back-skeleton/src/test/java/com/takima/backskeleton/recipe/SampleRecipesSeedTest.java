@@ -42,7 +42,7 @@ class SampleRecipesSeedTest {
     @Test
     void doesNotDuplicateIngredientsAlreadyInTheCatalog() {
         Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM ingredients WHERE name = 'Egg'", Integer.class);
+                "SELECT COUNT(*) FROM ingredients WHERE name = 'Oeuf'", Integer.class);
 
         assertThat(count).isEqualTo(1);
     }
