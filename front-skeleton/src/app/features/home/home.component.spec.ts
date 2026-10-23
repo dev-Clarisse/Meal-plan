@@ -38,7 +38,7 @@ describe('HomeComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
       providers: [
-        provideRouter([]),                             
+        provideRouter([]),                                    
         { provide: AuthService, useValue: authServiceSpy },
         { provide: UserService, useValue: userServiceSpy },
         { provide: NotificationService, useValue: notifServiceSpy },
@@ -47,15 +47,15 @@ describe('HomeComponent', () => {
 
     fixture = TestBed.createComponent(HomeComponent);
     component = fixture.componentInstance;
-
     
-    navigateSpy = spyOn(TestBed.inject(Router), 'navigate');
+    const router = TestBed.inject(Router);
+    navigateSpy = spyOn(router, 'navigate' as never);
 
     fixture.detectChanges();
   });
 
   afterEach(() => {
-    fixture.destroy();     
+    fixture.destroy();    
   });
 
   it('should create', () => {
