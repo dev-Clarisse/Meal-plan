@@ -61,7 +61,7 @@ export class RegisterComponent {
       .register({ email, password, consent })
       .pipe(switchMap(() => this.auth.login({ email, password })))
       .subscribe({
-        next: () => this.router.navigate(['/home']),
+        next: () => this.router.navigate(['/recettes']),
         error: (err: HttpErrorResponse) => {
           this.loading = false;
           this.errorMessage =

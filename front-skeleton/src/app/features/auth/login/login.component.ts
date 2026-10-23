@@ -39,7 +39,7 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigate(['/home']),
+      next: () => this.router.navigate(['/recettes']),
       error: (err: HttpErrorResponse) => {
         this.loading = false;
         this.errorMessage =
