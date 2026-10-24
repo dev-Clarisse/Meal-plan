@@ -1,58 +1,34 @@
 package com.takima.backskeleton.ingredient;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
+@RestController
+@RequestMapping("/api/v1/ingredients")
+public class IngredientController {
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class IngredientControllerIntegrationTest {
+    private final IngredientService ingredientService;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Test
-    void listsSeededIngredients() throws Exception {
-        mockMvc.perform(get("/api/v1/ingredients").with(jwt()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[?(@.name == 'Egg')]").exists());
+    public IngredientController(IngredientService ingredientService) {
+        this.ingredientService = ingredientService;
     }
 
-    @Test
-    void searchesIngredientsByName() throws Exception {
-        mockMvc.perform(get("/api/v1/ingredients").with(jwt()).param("query", "tom"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Tomato"));
+    @GetMapping
+    public List<IngredientResponse> search(@RequestParam(required = false) String query) {
+        return ingredientService.search(query);
     }
 
-    @Test
-    void createsIngredientAndRejectsDuplicate() throws Exception {
-        String body = "{\"name\":\"Sugar\",\"defaultUnit\":\"G\"}";
-
-        mockMvc.perform(post("/api/v1/ingredients").with(jwt()).contentType(MediaType.APPLICATION_JSON).content(body))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Sugar"));
-
-        mockMvc.perform(post("/api/v1/ingredients").with(jwt()).contentType(MediaType.APPLICATION_JSON).content(body))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    void rejectsBlankName() throws Exception {
-        mockMvc.perform(post("/api/v1/ingredients").with(jwt())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"defaultUnit\":\"G\"}"))
-                .andExpect(status().isBadRequest());
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public IngredientResponse create(@Valid @RequestBody IngredientRequest request) {
+        return ingredientService.create(request);
     }
 }

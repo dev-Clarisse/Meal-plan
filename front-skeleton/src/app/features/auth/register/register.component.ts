@@ -8,6 +8,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { switchMap } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/user.service';
+import { AuthLayoutComponent } from '../../../shared/auth-layout/auth-layout.component';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const pwd = group.get('password')?.value;
@@ -18,7 +19,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AuthLayoutComponent],
   templateUrl: './register.component.html',
   styleUrls: ['../login/login.component.scss'],
 })
@@ -60,7 +61,7 @@ export class RegisterComponent {
       .register({ email, password, consent })
       .pipe(switchMap(() => this.auth.login({ email, password })))
       .subscribe({
-        next: () => this.router.navigate(['/home']),
+        next: () => this.router.navigate(['/recettes']),
         error: (err: HttpErrorResponse) => {
           this.loading = false;
           this.errorMessage =

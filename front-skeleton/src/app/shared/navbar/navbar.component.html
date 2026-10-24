@@ -1,0 +1,23 @@
+@if (!authPage()) {
+  <header class="topbar" [class.transparent]="transparent() && !scrolled()">
+    <a class="brand" routerLink="/">Mijoté</a>
+
+    @if (isLoggedIn()) {
+      <nav class="links">
+        @for (item of items; track item.path) {
+          <a [routerLink]="item.path" routerLinkActive="active">{{ item.label }}</a>
+        }
+      </nav>
+
+      <div class="actions">
+        <app-notification-bell />
+        <button type="button" class="logout" (click)="logout()">Déconnexion</button>
+      </div>
+    } @else {
+      <div class="actions">
+        <a class="signin" routerLink="/login">Connexion</a>
+        <a class="signup" routerLink="/register">Créer un compte</a>
+      </div>
+    }
+  </header>
+}

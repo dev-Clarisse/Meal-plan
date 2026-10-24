@@ -1,0 +1,73 @@
+<section class="container form-page">
+  <app-back-link fallback="/recettes" />
+
+  <header class="head">
+    <h1>{{ recipeId === null ? 'Nouvelle recette' : 'Modifier la recette' }}</h1>
+  </header>
+
+  <form class="sheet" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="row g-3">
+      <div class="col-12 col-md-9">
+        <label>
+          <span class="lbl">Titre</span>
+          <input type="text" formControlName="title" />
+        </label>
+      </div>
+      <div class="col-12 col-md-3">
+        <label>
+          <span class="lbl">Portions</span>
+          <input type="number" min="1" formControlName="servings" />
+        </label>
+      </div>
+    </div>
+
+    <label>
+      <span class="lbl">Préparation</span>
+      <textarea rows="5" formControlName="instructions"></textarea>
+    </label>
+
+    <h2>Ingrédients</h2>
+    <datalist id="ingredient-options">
+      @for (ingredient of ingredients(); track ingredient.id) {
+      <option [value]="ingredient.name"></option>
+      }
+    </datalist>
+    <div formArrayName="ingredients" class="lines">
+      @for (line of lines.controls; track line; let i = $index) {
+      <div class="line" [formGroupName]="i">
+        <input
+          type="text"
+          list="ingredient-options"
+          placeholder="Choisir..."
+          [value]="ingredientName(line)"
+          (change)="selectIngredient(line, $event)"
+        />
+
+        <input type="number" step="any" min="0" formControlName="quantity" />
+
+        <select formControlName="unit">
+          @for (unit of units; track unit) {
+          <option [value]="unit">{{ unit }}</option>
+          }
+        </select>
+
+        <button type="button" class="ghost" (click)="removeLine(i)" [disabled]="lines.length === 1">
+          Retirer
+        </button>
+      </div>
+      }
+    </div>
+
+    <button type="button" class="ghost add" (click)="addLine()">
+      + Ajouter un ingrédient
+    </button>
+
+    @if (error()) {
+    <p class="error">{{ error() }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" [disabled]="saving()">Enregistrer</button>
+    </div>
+  </form>
+</section>
