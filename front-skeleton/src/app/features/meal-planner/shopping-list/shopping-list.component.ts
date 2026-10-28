@@ -8,6 +8,7 @@ import { QuantityPipe } from '../quantity.pipe';
   standalone: true,
   imports: [QuantityPipe],
   templateUrl: './shopping-list.component.html',
+  styleUrls: ['./shopping-list.component.scss'],
 })
 export class ShoppingListComponent implements OnChanges {
   private readonly service = inject(MealPlannerService);
@@ -25,6 +26,10 @@ export class ShoppingListComponent implements OnChanges {
       next: (l) => (this.list = l),
       error: () => (this.list = null),
     });
+  }
+
+  purchasedCount(): number {
+    return this.list?.items.filter((i) => i.purchased).length ?? 0;
   }
 
   generate(): void {

@@ -1,29 +1,35 @@
-<div class="mt-4">
-  <h5>Liste de courses</h5>
-  <button class="btn btn-success btn-sm" (click)="generate()">
-    {{ list ? 'Régénérer la liste' : 'Générer la liste de courses' }}
-  </button>
+<article class="result-card">
+  <div class="meta">
+    <span>Étape 2</span>
+    @if (list && !list.empty) {
+      <span>{{ purchasedCount() }} / {{ list.items.length }} acheté(s)</span>
+    }
+  </div>
+  <h2>Liste de courses</h2>
 
   @if (error) {
-    <div class="alert alert-danger py-2 mt-2">{{ error }}</div>
+    <p class="error">{{ error }}</p>
   }
 
-  @if (list) {
-    @if (list.empty) {
-      <p class="mt-2 text-success">Votre stock suffit : la liste de courses est vide.</p>
-    } @else {
-      <ul class="list-unstyled mt-2">
-        @for (item of list.items; track item.id) {
-          <li>
-            <label>
-              <input type="checkbox" [checked]="item.purchased" (change)="toggle(item)" />
-              <span [class.text-decoration-line-through]="item.purchased">
-                {{ item.name }} : {{ item.quantity | quantity: item.unit }}
-              </span>
-            </label>
-          </li>
-        }
-      </ul>
-    }
+  @if (!list) {
+    <p class="empty">Générez la liste à partir des ingrédients manquants.</p>
+  } @else if (list.empty) {
+    <p class="empty">Votre stock suffit : la liste de courses est vide.</p>
+  } @else {
+    <ul>
+      @for (item of list.items; track item.id) {
+        <li [class.done]="item.purchased">
+          <label>
+            <input type="checkbox" [checked]="item.purchased" (change)="toggle(item)" />
+            <span class="qty">{{ item.quantity | quantity: item.unit }}</span>
+            <span class="name">{{ item.name }}</span>
+          </label>
+        </li>
+      }
+    </ul>
   }
-</div>
+
+  <button type="button" class="btn-bistro" (click)="generate()">
+    {{ list ? 'Régénérer la liste' : 'Générer la liste' }}
+  </button>
+</article>

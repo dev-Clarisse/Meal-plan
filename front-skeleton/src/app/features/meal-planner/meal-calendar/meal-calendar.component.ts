@@ -1,5 +1,4 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Recipe } from '../../recipes/models/recipe.model';
@@ -30,10 +29,14 @@ function mondayOf(d: Date): Date {
 // Le backend plafonne la taille de page à 50 : suffisant pour le sélecteur du planning
 const RECIPE_PAGE_SIZE = 50;
 
+// Intl plutôt que DatePipe : la locale 'fr' n'est pas enregistrée dans l'application
+const LONG_DATE = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+const SHORT_DATE = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' });
+
 @Component({
   selector: 'app-meal-calendar',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule, CdkDropListGroup, CdkDropList, CdkDrag, QuantityPipe, ShoppingListComponent],
+  imports: [ReactiveFormsModule, CdkDropListGroup, CdkDropList, CdkDrag, QuantityPipe, ShoppingListComponent],
   templateUrl: './meal-calendar.component.html',
   styleUrls: ['./meal-calendar.component.scss'],
 })
@@ -95,6 +98,14 @@ export class MealCalendarComponent implements OnInit {
     const d = new Date(this.weekStart);
     d.setDate(d.getDate() + index);
     return d;
+  }
+
+  longDate(d: Date): string {
+    return LONG_DATE.format(d);
+  }
+
+  shortDate(d: Date): string {
+    return SHORT_DATE.format(d);
   }
 
   mealsIn(day: DayOfWeek, type: MealType): Meal[] {
