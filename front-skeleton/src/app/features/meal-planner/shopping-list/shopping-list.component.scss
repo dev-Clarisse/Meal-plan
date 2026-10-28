@@ -1,94 +1,32 @@
+@use '../planner-page' as page;
+
+@include page.planner-cards;
+
 :host {
   display: block;
   height: 100%;
 }
 
-.result-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 28px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  color: var(--ink);
-
-  h2 {
-    margin: 0 0 18px;
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    font-size: 2rem;
-    font-weight: 600;
-    line-height: 1.1;
-    color: var(--olive);
+.result-card li {
+  label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    cursor: pointer;
   }
 
-  ul {
-    flex: 1;
-    margin: 0 0 20px;
-    padding: 16px 0 0;
-    list-style: none;
-    border-top: 1px solid var(--line);
+  input {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    accent-color: var(--olive);
+    cursor: pointer;
   }
 
-  li {
-    padding: 3px 0;
-    color: var(--muted);
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 0;
-      cursor: pointer;
-    }
-
-    input {
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      accent-color: var(--olive);
-      cursor: pointer;
-    }
-
-    &.done .qty,
-    &.done .name {
-      text-decoration: line-through;
-      opacity: 0.55;
-    }
+  &.done .qty,
+  &.done .name {
+    text-decoration: line-through;
+    opacity: 0.55;
   }
-
-  .btn-bistro {
-    align-self: flex-start;
-  }
-}
-
-.meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.qty {
-  display: inline-block;
-  min-width: 90px;
-  font-weight: 600;
-  color: var(--terracotta);
-}
-
-.empty {
-  flex: 1;
-  margin: 0 0 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--line);
-  font-style: italic;
-  color: var(--muted);
-}
-
-.error {
-  color: var(--terracotta);
 }

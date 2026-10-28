@@ -1,42 +1,26 @@
 import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Recipe } from '../../recipes/models/recipe.model';
 import { RecipeService } from '../../recipes/services/recipe.service';
 import { ToastService } from '../../../shared/toast/toast.service';
-import { DAYS, DayOfWeek, MEAL_TYPES, Meal, MealPlan, MealType, MissingIngredient } from '../meal-planner.model';
+import {
+  DAYS, DayOfWeek, MEAL_TYPES, Meal, MealPlan, MealType, MissingIngredient, RECIPE_PAGE_SIZE,
+} from '../meal-planner.model';
 import { MealPlannerService } from '../meal-planner.service';
 import { QuantityPipe } from '../quantity.pipe';
-import { ShoppingListComponent } from '../shopping-list/shopping-list.component';
+import { addDays, longDate, shortDate, toIso, weekFromParam } from '../week';
 
 export interface Slot {
   day: DayOfWeek;
   type: MealType;
 }
 
-function toIso(d: Date): string {
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${m}-${day}`;
-}
-
-function mondayOf(d: Date): Date {
-  const c = new Date(d);
-  c.setDate(c.getDate() - ((c.getDay() + 6) % 7));
-  return c;
-}
-
-// Le backend plafonne la taille de page à 50 : suffisant pour le sélecteur du planning
-const RECIPE_PAGE_SIZE = 50;
-
-// Intl plutôt que DatePipe : la locale 'fr' n'est pas enregistrée dans l'application
-const LONG_DATE = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-const SHORT_DATE = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' });
-
 @Component({
   selector: 'app-meal-calendar',
   standalone: true,
-  imports: [ReactiveFormsModule, CdkDropListGroup, CdkDropList, CdkDrag, QuantityPipe, ShoppingListComponent],
+  imports: [ReactiveFormsModule, RouterLink, CdkDropListGroup, CdkDropList, CdkDrag, QuantityPipe],
   templateUrl: './meal-calendar.component.html',
   styleUrls: ['./meal-calendar.component.scss'],
 })
@@ -44,12 +28,15 @@ export class MealCalendarComponent implements OnInit {
   private readonly service = inject(MealPlannerService);
   private readonly recipeService = inject(RecipeService);
   private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
 
   readonly days = DAYS;
   readonly mealTypes = MEAL_TYPES;
+  readonly longDate = longDate;
+  readonly shortDate = shortDate;
   recipes: Recipe[] = [];
 
-  weekStart = mondayOf(new Date());
+  weekStart = weekFromParam(inject(ActivatedRoute).snapshot.queryParamMap.get('semaine'));
   plan?: MealPlan;
   error = '';
   missing: MissingIngredient[] | null = null;
@@ -87,25 +74,19 @@ export class MealCalendarComponent implements OnInit {
     });
   }
 
+  get weekParam(): string {
+    return toIso(this.weekStart);
+  }
+
   shiftWeek(weeks: number): void {
-    const next = new Date(this.weekStart);
-    next.setDate(next.getDate() + 7 * weeks);
-    this.weekStart = next;
+    this.weekStart = addDays(this.weekStart, 7 * weeks);
+    // La semaine est gardée dans l'URL pour la retrouver en passant à la page Courses
+    this.router.navigate([], { queryParams: { semaine: this.weekParam }, replaceUrl: true });
     this.loadWeek();
   }
 
   dayDate(index: number): Date {
-    const d = new Date(this.weekStart);
-    d.setDate(d.getDate() + index);
-    return d;
-  }
-
-  longDate(d: Date): string {
-    return LONG_DATE.format(d);
-  }
-
-  shortDate(d: Date): string {
-    return SHORT_DATE.format(d);
+    return addDays(this.weekStart, index);
   }
 
   mealsIn(day: DayOfWeek, type: MealType): Meal[] {

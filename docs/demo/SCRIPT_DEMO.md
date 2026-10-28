@@ -35,7 +35,7 @@ Les alertes de péremption sont créées **une fois par jour, à 7 h**. Pour que
    - Backend : http://localhost:8085 — Front : http://localhost:4200
 2. Vérifier que le **planning de la semaine en cours est vide** (sinon prendre la semaine suivante avec la flèche).
 3. Vérifier que la cloche affiche bien l'alerte des œufs.
-4. Ouvrir un onglet par passage : Inventaire, Recettes, Planning. Zoom du navigateur à 125 % pour le vidéoprojecteur.
+4. Ouvrir un onglet par passage : Inventaire, Recettes, Planning (la page Courses s'ouvre depuis Planning). Zoom du navigateur à 125 % pour le vidéoprojecteur.
 5. Se reconnecter juste avant de commencer : **la session expire au bout de 15 minutes**.
 
 ---
@@ -65,10 +65,11 @@ Les alertes de péremption sont créées **une fois par jour, à 7 h**. Pour que
 3. Ajouter **Gâteau moelleux**, **6 portions**, **mercredi**, **dîner**.
 4. **Glisser l'omelette du mardi au jeudi.**
    « Le déplacement est enregistré en base : si je recharge la page, l'omelette est toujours jeudi. » → recharger (F5) pour le prouver.
-5. Cliquer sur **« Calculer les ingrédients manquants »**.
+5. Cliquer sur **« Calculer les manquants »**.
    « Il faut 4 + 4 = 8 œufs. Le frigo en a 6. Il en manque **2**. Le beurre et le lait suffisent, donc ils n'apparaissent pas. »
-   → affichage attendu : **Oeuf : 2 pièces**, et rien d'autre.
-6. Cliquer sur **« Générer la liste de courses »** → **2 œufs** apparaissent.
+   → affichage attendu : **2 pièces Oeuf**, et rien d'autre.
+6. Cliquer sur **« Voir la liste de courses »** : la page Courses s'ouvre sur la même semaine, avec les repas rappelés à droite.
+   Cliquer sur **« Générer la liste »** → **2 œufs** apparaissent.
 7. Cocher les œufs comme achetés, puis cliquer sur **« Régénérer la liste »**.
    « Si je change mon planning et que je régénère, ce qui est déjà coché est conservé, et il n'y a jamais de doublon. »
 

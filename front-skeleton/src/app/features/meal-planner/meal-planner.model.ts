@@ -53,6 +53,9 @@ export interface ShoppingList {
   items: ShoppingItem[];
 }
 
+// Le backend plafonne la taille de page à 50 : suffisant pour lister les recettes du planning
+export const RECIPE_PAGE_SIZE = 50;
+
 export const DAYS: { value: DayOfWeek; label: string }[] = [
   { value: 'MONDAY', label: 'Lundi' },
   { value: 'TUESDAY', label: 'Mardi' },

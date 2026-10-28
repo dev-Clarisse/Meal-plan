@@ -16,7 +16,7 @@
   </div>
 </header>
 
-<section class="container planning">
+<section class="container page">
   <div class="toolbar">
     <span class="count">{{ plan?.meals?.length ?? 0 }} repas planifié(s)</span>
   </div>
@@ -119,9 +119,16 @@
     </div>
 
     <div class="col-12 col-lg-6">
-      @if (plan) {
-        <app-shopping-list [planId]="plan.id"></app-shopping-list>
-      }
+      <article class="result-card">
+        <div class="meta">
+          <span>Étape 2</span>
+        </div>
+        <h2>Liste de courses</h2>
+        <p class="empty">Générez la liste de la semaine et cochez les articles au fil de vos achats.</p>
+        <a class="btn-bistro" routerLink="/courses" [queryParams]="{ semaine: weekParam }">
+          Voir la liste de courses <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </a>
+      </article>
     </div>
   </div>
 </section>

@@ -7,4 +7,5 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Recettes', path: '/recettes' },
   { label: 'Inventaire', path: '/inventory' },
   { label: 'Planning', path: '/planning' },
+  { label: 'Courses', path: '/courses' },
 ];
