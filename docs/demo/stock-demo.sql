@@ -6,9 +6,9 @@ INSERT INTO inventory (id, user_id, name, quantity, unit, expiry_date, created_a
 SELECT gen_random_uuid(), u.id, v.name, v.quantity, v.unit, v.expiry, now(), now(), 0
 FROM users u
 CROSS JOIN (VALUES
-    ('Egg',     6,   'PIECE', current_date + 2),
-    ('Butter',  200, 'GRAM',  current_date + 30),
-    ('Milk',    1,   'LITER', current_date + 7),
-    ('Chicken', 500, 'GRAM',  current_date + 3)
+    ('Oeuf',    6,   'PIECE', current_date + 2),
+    ('Beurre',  200, 'GRAM',  current_date + 30),
+    ('Lait',    1,   'LITER', current_date + 7),
+    ('Poulet',  500, 'GRAM',  current_date + 3)
 ) AS v(name, quantity, unit, expiry)
 WHERE u.email = :email;

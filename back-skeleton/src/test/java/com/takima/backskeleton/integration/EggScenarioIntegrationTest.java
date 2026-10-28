@@ -58,22 +58,22 @@ class EggScenarioIntegrationTest {
 
         // Stock : 6 oeufs valides, 10 oeufs périmés (ignorés), beurre et lait suffisants
         LocalDate future = LocalDate.now().plusDays(60);
-        stock(user, "Egg", "6", Unit.PIECE, future);
-        stock(user, "Egg", "10", Unit.PIECE, LocalDate.now().minusDays(30));
-        stock(user, "Butter", "200", Unit.GRAM, future);
-        stock(user, "Milk", "1", Unit.LITER, future);
+        stock(user, "Oeuf", "6", Unit.PIECE, future);
+        stock(user, "Oeuf", "10", Unit.PIECE, LocalDate.now().minusDays(30));
+        stock(user, "Beurre", "200", Unit.GRAM, future);
+        stock(user, "Lait", "1", Unit.LITER, future);
 
-        // Plan : Omelette (2 portions = 4 oeufs) + Cake (6 portions = 4 oeufs) = 8 oeufs
+        // Plan : Omelette nature (2 portions = 4 oeufs) + Gâteau moelleux (6 portions = 4 oeufs) = 8 oeufs
         MealPlanDto plan = mealPlanService.getOrCreate(userId, LocalDate.of(2026, 10, 26));
         mealPlanService.addMeal(plan.id(), userId,
-                new AddMealRequest(recipeId("Omelette"), DayOfWeek.MONDAY, MealType.LUNCH, 2));
+                new AddMealRequest(recipeId("Omelette nature"), DayOfWeek.MONDAY, MealType.LUNCH, 2));
         mealPlanService.addMeal(plan.id(), userId,
-                new AddMealRequest(recipeId("Cake"), DayOfWeek.TUESDAY, MealType.DINNER, 6));
+                new AddMealRequest(recipeId("Gâteau moelleux"), DayOfWeek.TUESDAY, MealType.DINNER, 6));
 
         List<MissingIngredientDto> missing = mealPlanService.getMissingIngredients(plan.id(), userId);
 
         assertEquals(1, missing.size());
-        assertEquals("Egg", missing.get(0).name());
+        assertEquals("Oeuf", missing.get(0).name());
         assertEquals(0, new BigDecimal("2").compareTo(missing.get(0).quantity()));
 
         // Liste de courses : 2 oeufs, et pas de doublon si on régénère
@@ -90,15 +90,15 @@ class EggScenarioIntegrationTest {
                 new User("full-" + UUID.randomUUID() + "@test.com", "hash", java.time.Instant.now()));
         UUID userId = user.getId();
         LocalDate future = LocalDate.now().plusDays(60);
-        stock(user, "Egg", "20", Unit.PIECE, future);
-        stock(user, "Butter", "500", Unit.GRAM, future);
-        stock(user, "Milk", "2", Unit.LITER, future);
+        stock(user, "Oeuf", "20", Unit.PIECE, future);
+        stock(user, "Beurre", "500", Unit.GRAM, future);
+        stock(user, "Lait", "2", Unit.LITER, future);
 
         MealPlanDto plan = mealPlanService.getOrCreate(userId, LocalDate.of(2026, 11, 2));
         mealPlanService.addMeal(plan.id(), userId,
-                new AddMealRequest(recipeId("Omelette"), DayOfWeek.MONDAY, MealType.LUNCH, 2));
+                new AddMealRequest(recipeId("Omelette nature"), DayOfWeek.MONDAY, MealType.LUNCH, 2));
         mealPlanService.addMeal(plan.id(), userId,
-                new AddMealRequest(recipeId("Cake"), DayOfWeek.TUESDAY, MealType.DINNER, 6));
+                new AddMealRequest(recipeId("Gâteau moelleux"), DayOfWeek.TUESDAY, MealType.DINNER, 6));
 
         ShoppingListDto list = shoppingListService.generate(plan.id(), userId);
         assertTrue(list.empty());
