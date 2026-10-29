@@ -1,0 +1,167 @@
+// Mise en page commune aux pages Planning et Courses, sur le modèle de la page Recettes
+@mixin planner-page($banner-image) {
+  :host {
+    display: block;
+  }
+
+  .banner {
+    position: relative;
+    height: 340px;
+    display: flex;
+    align-items: flex-end;
+    background:
+      linear-gradient(180deg, rgba(14, 18, 15, 0.55) 0%, rgba(14, 18, 15, 0.35) 50%, rgba(14, 18, 15, 0.6) 100%),
+      url($banner-image) center / cover no-repeat,
+      var(--olive);
+  }
+
+  .banner-inner {
+    padding-bottom: 72px;
+
+    h1 {
+      margin: 0;
+      color: #fff;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  .week {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -28px;
+  }
+
+  .week-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    box-shadow: 0 14px 36px rgba(20, 20, 18, 0.18);
+  }
+
+  .week-label {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--olive);
+    text-align: center;
+  }
+
+  .nav {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .page {
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .count {
+    color: var(--muted);
+  }
+
+  .state {
+    color: var(--muted);
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  @include planner-cards;
+}
+
+// Cartes « résultat » (manquants, liste de courses, repas de la semaine)
+@mixin planner-cards {
+  .result-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 28px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--ink);
+
+    h2 {
+      margin: 0 0 18px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2rem;
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--olive);
+    }
+
+    ul {
+      flex: 1;
+      margin: 0 0 20px;
+      padding: 16px 0 0;
+      list-style: none;
+      border-top: 1px solid var(--line);
+
+      li {
+        padding: 3px 0;
+        color: var(--muted);
+      }
+    }
+
+    .btn-bistro {
+      align-self: flex-start;
+    }
+  }
+
+  a.btn-bistro,
+  a.btn-bistro:hover {
+    color: #fff;
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .qty {
+    display: inline-block;
+    min-width: 90px;
+    font-weight: 600;
+    color: var(--terracotta);
+  }
+
+  .empty {
+    flex: 1;
+    margin: 0 0 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .error {
+    color: var(--terracotta);
+  }
+}

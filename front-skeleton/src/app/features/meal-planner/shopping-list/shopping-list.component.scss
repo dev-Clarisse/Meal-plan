@@ -1,0 +1,32 @@
+@use '../planner-page' as page;
+
+@include page.planner-cards;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.result-card li {
+  label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  input {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    accent-color: var(--olive);
+    cursor: pointer;
+  }
+
+  &.done .qty,
+  &.done .name {
+    text-decoration: line-through;
+    opacity: 0.55;
+  }
+}
