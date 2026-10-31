@@ -1,0 +1,61 @@
+<header class="banner">
+  <div class="banner-inner container">
+    <h1>Courses</h1>
+  </div>
+
+  <div class="week container">
+    <div class="week-bar">
+      <button type="button" class="nav" (click)="shiftWeek(-1)" aria-label="Semaine précédente">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+      <span class="week-label">Semaine du {{ longDate(weekStart) }}</span>
+      <button type="button" class="nav" (click)="shiftWeek(1)" aria-label="Semaine suivante">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="container page">
+  <div class="toolbar">
+    <span class="count">{{ plan?.meals?.length ?? 0 }} repas cette semaine</span>
+    <a class="btn-bistro" routerLink="/planning" [queryParams]="{ semaine: weekParam }">
+      <i class="bi bi-calendar-week" aria-hidden="true"></i> Modifier le planning
+    </a>
+  </div>
+
+  @if (error) {
+    <p class="state error">{{ error }}</p>
+  }
+
+  <div class="row g-4">
+    <div class="col-12 col-lg-7">
+      @if (plan) {
+        <app-shopping-list [planId]="plan.id"></app-shopping-list>
+      }
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <article class="result-card">
+        <div class="meta">
+          <span>D'après le planning</span>
+          <span>{{ plan?.meals?.length ?? 0 }} repas</span>
+        </div>
+        <h2>Repas de la semaine</h2>
+        @if (sortedMeals().length === 0) {
+          <p class="empty">Aucun repas planifié : la liste de courses restera vide.</p>
+        } @else {
+          <ul>
+            @for (m of sortedMeals(); track m.id) {
+              <li>
+                <span class="slot-label">{{ slotLabel(m) }}</span>
+                <span class="meal-title">{{ recipeTitle(m.recipeId) }}</span>
+                <span class="servings">{{ m.servings }} portion(s)</span>
+              </li>
+            }
+          </ul>
+        }
+      </article>
+    </div>
+  </div>
+</section>

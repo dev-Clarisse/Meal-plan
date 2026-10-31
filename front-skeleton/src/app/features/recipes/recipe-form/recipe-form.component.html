@@ -59,6 +59,11 @@
     </label>
 
     <h2 class="mt-4">Ingrédients</h2>
+    <datalist id="ingredient-options">
+      @for (ingredient of ingredients(); track ingredient.id) {
+        <option [value]="ingredient.name"></option>
+      }
+    </datalist>
     <div formArrayName="ingredients" class="lines">
       @for (line of lines.controls; track line; let i = $index) {
         <div
@@ -69,22 +74,19 @@
           @if (line.value.pendingName && line.value.ingredientId === 0) {
             <div class="ai-suggestion-badge">
               <span class="sparkle">✨</span>
-              <span class="ai-label">Ingrédient suggéré par l'IA :</span>
+              <span class="ai-label">Ingrédient suggéré par l'IA (sera créé à l'enregistrement)</span>
             </div>
           }
 
-          <div class="line-fields">
-            <select formControlName="ingredientId" class="select-ingredient" [compareWith]="sameId">
-              @if (line.value.pendingName && line.value.ingredientId === 0) {
-                <option [ngValue]="0" selected>{{ line.value.pendingName }} (Ingrédient à créer)</option>
-              } @else {
-                <option [ngValue]="0" disabled>Choisir un ingrédient...</option>
-              }
-
-              @for (ingredient of ingredients(); track ingredient.id) {
-                <option [ngValue]="ingredient.id">{{ ingredient.name }}</option>
-              }
-            </select>
+          <div class="line line-fields">
+            <input
+              type="text"
+              list="ingredient-options"
+              class="select-ingredient"
+              placeholder="Choisir..."
+              [value]="ingredientName(line) || line.value.pendingName"
+              (change)="selectIngredient(line, $event)"
+            />
 
             <input type="number" step="any" min="0" formControlName="quantity" class="input-qty" placeholder="Qté" />
 

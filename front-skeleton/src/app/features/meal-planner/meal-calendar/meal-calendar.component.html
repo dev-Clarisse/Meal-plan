@@ -1,0 +1,134 @@
+<header class="banner">
+  <div class="banner-inner container">
+    <h1>Planning</h1>
+  </div>
+
+  <div class="week container">
+    <div class="week-bar">
+      <button type="button" class="nav" (click)="shiftWeek(-1)" aria-label="Semaine précédente">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
+      <span class="week-label">Semaine du {{ longDate(weekStart) }}</span>
+      <button type="button" class="nav" (click)="shiftWeek(1)" aria-label="Semaine suivante">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="container page">
+  <div class="toolbar">
+    <span class="count">{{ plan?.meals?.length ?? 0 }} repas planifié(s)</span>
+  </div>
+
+  @if (error) {
+    <p class="state error">{{ error }}</p>
+  }
+
+  <form class="add-card" [formGroup]="form" (ngSubmit)="addMeal()">
+    <label>
+      <span>Recette</span>
+      <select formControlName="recipeId">
+        @for (r of recipes; track r.id) {
+          <option [ngValue]="r.id">{{ r.title }}</option>
+        } @empty {
+          <option [ngValue]="0" disabled>Aucune recette disponible</option>
+        }
+      </select>
+    </label>
+    <label>
+      <span>Jour</span>
+      <select formControlName="dayOfWeek">
+        @for (d of days; track d.value) {
+          <option [value]="d.value">{{ d.label }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      <span>Repas</span>
+      <select formControlName="mealType">
+        @for (t of mealTypes; track t.value) {
+          <option [value]="t.value">{{ t.label }}</option>
+        }
+      </select>
+    </label>
+    <label class="servings">
+      <span>Portions</span>
+      <input type="number" min="1" formControlName="servings" />
+    </label>
+    <button class="btn-bistro" type="submit" [disabled]="form.invalid || !plan">+ Ajouter</button>
+  </form>
+
+  <div class="calendar-scroll">
+    <div class="calendar" cdkDropListGroup>
+      <div class="corner"></div>
+      @for (d of days; track d.value; let i = $index) {
+        <div class="day">
+          <span class="day-name">{{ d.label }}</span>
+          <span class="day-date">{{ shortDate(dayDate(i)) }}</span>
+        </div>
+      }
+
+      @for (t of mealTypes; track t.value) {
+        <div class="meal-type">{{ t.label }}</div>
+        @for (d of days; track d.value) {
+          <div class="slot"
+               cdkDropList
+               [cdkDropListData]="slot(d.value, t.value)"
+               (cdkDropListDropped)="drop($event)">
+            @for (m of mealsIn(d.value, t.value); track m.id) {
+              <div class="meal" cdkDrag [cdkDragData]="m">
+                <span class="meal-title">{{ recipeTitle(m.recipeId) }}</span>
+                <span class="meal-servings">
+                  <i class="bi bi-people" aria-hidden="true"></i> {{ m.servings }} portion(s)
+                </span>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  </div>
+  <p class="hint"><i class="bi bi-arrows-move" aria-hidden="true"></i> Glissez un repas pour le déplacer.</p>
+
+  <div class="row g-4 results">
+    <div class="col-12 col-lg-6">
+      <article class="result-card">
+        <div class="meta">
+          <span>Étape 1</span>
+          @if (missing !== null) {
+            <span>{{ missing.length }} ingrédient(s)</span>
+          }
+        </div>
+        <h2>Ingrédients manquants</h2>
+        @if (missing === null) {
+          <p class="empty">Comparez les recettes de la semaine avec votre stock.</p>
+        } @else if (missing.length === 0) {
+          <p class="empty">Votre stock suffit : rien à acheter.</p>
+        } @else {
+          <ul>
+            @for (m of missing; track m.ingredientId) {
+              <li><span class="qty">{{ m.quantity | quantity: m.unit }}</span> {{ m.name }}</li>
+            }
+          </ul>
+        }
+        <button type="button" class="btn-bistro" (click)="loadMissing()" [disabled]="!plan">
+          Calculer les manquants
+        </button>
+      </article>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <article class="result-card">
+        <div class="meta">
+          <span>Étape 2</span>
+        </div>
+        <h2>Liste de courses</h2>
+        <p class="empty">Générez la liste de la semaine et cochez les articles au fil de vos achats.</p>
+        <a class="btn-bistro" routerLink="/courses" [queryParams]="{ semaine: weekParam }">
+          Voir la liste de courses <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </a>
+      </article>
+    </div>
+  </div>
+</section>

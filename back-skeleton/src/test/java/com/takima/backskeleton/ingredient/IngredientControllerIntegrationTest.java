@@ -26,14 +26,14 @@ class IngredientControllerIntegrationTest {
     void listsSeededIngredients() throws Exception {
         mockMvc.perform(get("/api/v1/ingredients").with(jwt()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[?(@.name == 'Egg')]").exists());
+                .andExpect(jsonPath("$[?(@.name == 'Oeuf')]").exists());
     }
 
     @Test
     void searchesIngredientsByName() throws Exception {
         mockMvc.perform(get("/api/v1/ingredients").with(jwt()).param("query", "tom"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Tomato"));
+                .andExpect(jsonPath("$[0].name").value("Tomate"));
     }
 
     @Test
@@ -65,7 +65,7 @@ class IngredientControllerIntegrationTest {
     void rejectsDuplicateOfSeededIngredient() throws Exception {
         mockMvc.perform(post("/api/v1/ingredients").with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Sugar\",\"defaultUnit\":\"G\"}"))
+                .content("{\"name\":\"Sucre\",\"defaultUnit\":\"G\"}"))
                 .andExpect(status().isConflict());
     }
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Recipe } from '../models/recipe.model';
 import { BackLinkComponent } from '../../../shared/back-link/back-link.component';
@@ -19,6 +20,7 @@ export class RecipeDetailComponent implements OnInit {
   private readonly confirmService = inject(ConfirmService);
   private readonly toast = inject(ToastService);
   private readonly recipeService = inject(RecipeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly recipe = signal<Recipe | null>(null);
   readonly loading = signal(true);
@@ -26,7 +28,8 @@ export class RecipeDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.recipeService.findById(id).subscribe({
+    const request$ = this.recipeService.findById(id).pipe(takeUntilDestroyed(this.destroyRef));
+    request$.subscribe({
       next: (recipe) => {
         this.recipe.set(recipe);
         this.loading.set(false);

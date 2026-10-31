@@ -21,12 +21,6 @@ export const routes: Routes = [
   },
 
   {
-    path: 'home',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/home/home.component').then((m) => m.HomeComponent),
-  },
-  {
     path: 'inventory',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -56,6 +50,19 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/recipes/recipe-detail/recipe-detail.component').then((m) => m.RecipeDetailComponent),
+  },
+
+  {
+    path: 'planning',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/meal-planner/meal-calendar/meal-calendar.component').then((m) => m.MealCalendarComponent),
+  },
+  {
+    path: 'courses',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/meal-planner/courses/courses.component').then((m) => m.CoursesComponent),
   },
 
   { path: '**', redirectTo: 'login' },

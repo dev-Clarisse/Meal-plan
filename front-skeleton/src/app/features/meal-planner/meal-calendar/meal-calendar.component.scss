@@ -1,0 +1,153 @@
+@use '../planner-page' as page;
+
+@include page.planner-page('/assets/banner-planning.jpg');
+
+.add-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1 1 160px;
+    margin: 0;
+
+    span {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+  }
+
+  .servings {
+    flex: 0 1 110px;
+  }
+}
+
+.calendar-scroll {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: 120px repeat(7, minmax(130px, 1fr));
+  gap: 10px;
+  min-width: 1040px;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 4px;
+}
+
+.day-name {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.day-date {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--olive);
+}
+
+.meal-type {
+  display: flex;
+  align-items: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  font-weight: 600;
+}
+
+.slot {
+  min-height: 96px;
+  padding: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  transition: border-color 0.2s, background 0.2s;
+
+  &.cdk-drop-list-receiving {
+    border-color: var(--olive);
+    border-style: dashed;
+  }
+
+  &.cdk-drop-list-dragging {
+    background: var(--mp-green-light);
+  }
+}
+
+.meal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--terracotta);
+  border-radius: 10px;
+  cursor: grab;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    box-shadow: 0 8px 20px rgba(47, 74, 58, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+.meal-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--olive);
+}
+
+.meal-servings {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cdk-drag-preview {
+  box-shadow: 0 14px 32px rgba(47, 74, 58, 0.22);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating,
+.slot.cdk-drop-list-dragging .meal:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.hint {
+  margin: 12px 0 40px;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--muted);
+}

@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -25,6 +26,7 @@ export class RecipeFormComponent implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly recipeService = inject(RecipeService);
   private readonly ingredientService = inject(IngredientService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly units: Unit[] = ['G', 'KG', 'ML', 'L', 'TSP', 'TBSP', 'PIECE'];
   readonly ingredients = signal<Ingredient[]>([]);
@@ -35,8 +37,6 @@ export class RecipeFormComponent implements OnInit {
 
   /** Ingrédients suggérés par l'IA et absents de la base (créés à l'enregistrement). */
   readonly missing = signal<{ name: string; unit: Unit }[]>([]);
-
-  readonly sameId = (a: unknown, b: unknown) => Number(a) === Number(b);
 
   recipeId: number | null = null;
 
@@ -52,12 +52,15 @@ export class RecipeFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.ingredientService.search().subscribe((list) => {
+    this.ingredientService.search().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((list) => {
       this.ingredients.set(list);
       const id = this.route.snapshot.paramMap.get('id');
       if (id) {
         this.recipeId = Number(id);
-        this.recipeService.findById(this.recipeId).subscribe({
+        this.recipeService
+          .findById(this.recipeId)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
           next: (recipe) => this.fill(recipe),
           error: () => this.error.set('Recette introuvable.'),
         });
@@ -74,6 +77,18 @@ export class RecipeFormComponent implements OnInit {
       this.lines.removeAt(index);
       this.refreshMissing();
     }
+  }
+
+  ingredientName(line: AbstractControl): string {
+    const id = Number(line.get('ingredientId')?.value);
+    return this.ingredients().find((ingredient) => ingredient.id === id)?.name ?? '';
+  }
+
+  selectIngredient(line: AbstractControl, event: Event): void {
+    const name = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    const match = this.ingredients().find((ingredient) => ingredient.name.toLowerCase() === name);
+    line.patchValue({ ingredientId: match?.id ?? 0, pendingName: '' });
+    this.refreshMissing();
   }
 
   async submit(): Promise<void> {

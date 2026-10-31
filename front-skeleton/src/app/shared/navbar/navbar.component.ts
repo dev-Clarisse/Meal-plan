@@ -5,7 +5,7 @@ import { filter, map } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationBellComponent } from '../../features/notifications/notification-bell.component';
 
-const TRANSPARENT_PATHS = ['/', '/recettes'];
+const TRANSPARENT_PATHS = ['/', '/recettes', '/planning', '/courses'];
 import { NAV_ITEMS } from '../navbar/nav-items';
 
 const AUTH_PATHS = ['/login', '/register'];
