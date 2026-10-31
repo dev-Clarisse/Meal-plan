@@ -89,10 +89,10 @@ En développement, le serveur Angular redirige les appels `/api` vers le back su
 |   |-- docker-compose.yml
 |   `-- .env.sample
 |-- front-skeleton/
-|   `-- src/app/
-|       |-- core/            guards, intercepteurs, modèles, services
-|       |-- features/        auth, landing, recipes, inventory, notifications, meal-planner
-|       `-- shared/          navbar, auth-layout, back-link, confirm-dialog, toast, directives
+|   |-- src/app/
+|   |   |-- core/            guards, intercepteurs, modèles, services
+|   |   |-- features/        auth, landing, recipes, inventory, notifications, meal-planner
+|   |   `-- shared/          navbar, auth-layout, back-link, confirm-dialog, toast, directives
 |   `-- skills/            skill IA pour ajouter une page au front
 |-- .github/workflows/       intégration continue
 |-- docs/previews/        aperçu animé du README
