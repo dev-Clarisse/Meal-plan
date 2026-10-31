@@ -19,13 +19,14 @@ VALUES
     CURRENT_TIMESTAMP - INTERVAL '5' DAY, 
     CURRENT_TIMESTAMP - INTERVAL '5' DAY, 
     0
-);
+)
+ON CONFLICT DO NOTHING;
 
 INSERT INTO inventory (id, user_id, name, quantity, unit, expiry_date, created_at, updated_at, version) 
 VALUES 
 (
     'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380c11', 
-    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', -- CORRIGÉ : pointe vers l'ID d'Alice (a11)
+    'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
     'Lait demi-écrémé', 
     2.000, 
     'LITER', 
@@ -55,7 +56,8 @@ VALUES
     CURRENT_TIMESTAMP, 
     CURRENT_TIMESTAMP, 
     0
-);
+)
+ON CONFLICT DO NOTHING;
 
 
 INSERT INTO notifications (id, user_id, inventory_id, type, message, is_read, created_at) 
@@ -77,4 +79,5 @@ VALUES
     'Votre article "Oeufs bio" expire demain !', 
     TRUE, 
     CURRENT_TIMESTAMP
-);
+)
+ON CONFLICT DO NOTHING;
