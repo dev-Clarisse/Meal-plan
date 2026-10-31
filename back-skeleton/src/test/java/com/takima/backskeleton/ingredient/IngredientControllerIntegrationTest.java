@@ -38,21 +38,34 @@ class IngredientControllerIntegrationTest {
 
     @Test
     void createsIngredientAndRejectsDuplicate() throws Exception {
-        String body = "{\"name\":\"Sugar\",\"defaultUnit\":\"G\"}";
+        String name = "Test-" + java.util.UUID.randomUUID();
+        String body = "{\"name\":\"" + name + "\",\"defaultUnit\":\"G\"}";
 
-        mockMvc.perform(post("/api/v1/ingredients").with(jwt()).contentType(MediaType.APPLICATION_JSON).content(body))
+        mockMvc.perform(post("/api/v1/ingredients").with(jwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Sugar"));
+                .andExpect(jsonPath("$.name").value(name));
 
-        mockMvc.perform(post("/api/v1/ingredients").with(jwt()).contentType(MediaType.APPLICATION_JSON).content(body))
+        mockMvc.perform(post("/api/v1/ingredients").with(jwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
                 .andExpect(status().isConflict());
     }
 
     @Test
     void rejectsBlankName() throws Exception {
         mockMvc.perform(post("/api/v1/ingredients").with(jwt())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\",\"defaultUnit\":\"G\"}"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"defaultUnit\":\"G\"}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void rejectsDuplicateOfSeededIngredient() throws Exception {
+        mockMvc.perform(post("/api/v1/ingredients").with(jwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"Sucre\",\"defaultUnit\":\"G\"}"))
+                .andExpect(status().isConflict());
     }
 }
