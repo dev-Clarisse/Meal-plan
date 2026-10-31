@@ -394,18 +394,16 @@ Un assistant de code IA a servi à guider la conception, à écrire et relire le
 
 ### Justification
 
-- **Génération de recettes** : saisir une recette est la tâche la plus longue pour l'utilisateur. Un brouillon réduit cet effort, et l'utilisateur garde la main en le relisant avant d'enregistrer. Le modèle tourne en local avec Ollama : aucune clé d'API, aucun coût à l'usage et aucune donnée envoyée à un service externe.
+- **Génération de recettes** : saisir une recette à la main prend du temps. Un brouillon réduit cet effort, et l'utilisateur garde la main en le relisant avant d'enregistrer. Le modèle tourne en local avec Ollama : aucune clé d'API, aucun coût à l'usage et aucune donnée envoyée à un service externe.
 - **Skill** : ajouter une page demande toujours les mêmes étapes. Les décrire dans un skill rend le résultat d'une IA de code reproductible et conforme aux conventions du projet.
 - **Assistant de code** : il a permis de brancher entre elles des parties développées séparément et de vérifier le projet de bout en bout.
 
 ### Conclusions
 
-> **Brouillon à relire et à compléter par l'équipe avant le rendu, puis retirer cette ligne.**
-
-- **Un résultat qui compile n'est pas un résultat qui marche.** Une erreur sur le contenu du jeton JWT rendait l'inventaire inutilisable alors que tous les tests passaient, car ils simulaient ce jeton. Elle n'a été détectée qu'en lançant l'application réelle. Nous en retenons qu'il faut au moins un test de bout en bout, en plus des tests générés.
-- **Le contexte du projet fait la qualité de la réponse.** Les propositions sont meilleures quand l'IA s'appuie sur le code et les conventions existants, ce que le skill formalise.
-- **La responsabilité reste humaine.** La relecture croisée des pull requests a permis de repérer des problèmes que l'IA n'avait pas signalés, comme des migrations renumérotées ou des données d'exemple placées dans les migrations.
-- **Le modèle local a ses limites.** Il demande d'installer Ollama et un modèle, et ses réponses sont plus lentes et moins régulières. Elles doivent donc être validées avant enregistrement.
+- **Un résultat qui compile n'est pas un résultat qui marche.** Une erreur sur le contenu du jeton JWT rendait l'inventaire inutilisable alors que tous les tests passaient, car ils simulaient ce jeton. Elle n'a été détectée qu'en lançant l'application réelle. Nous en retenons qu'il faut toujours exécuter le scénario complet sur l'application lancée, en plus des tests automatisés.
+- **Le contexte du projet est indispensable.** Une IA de code ne respecte nos conventions que si elle les connaît : c'est ce que le skill formalise, et sa validation en quatre étapes a corrigé plusieurs oublis de la première version.
+- **La responsabilité reste humaine.** La relecture croisée des pull requests a permis de repérer des problèmes avant leur fusion, comme des migrations renumérotées ou des données d'exemple placées dans les migrations.
+- **Le modèle local a ses limites.** Il demande d'installer Ollama et un modèle. Lors d'un essai avec le petit modèle `qwen2.5:1.5b`, la réponse a pris environ une minute et mélangeait des ingrédients sans rapport avec la demande : c'est pourquoi le résultat reste un brouillon à relire avant enregistrement.
 
 ## Dépannage
 
