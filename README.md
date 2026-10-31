@@ -2,7 +2,7 @@
 
 [![Backend CI](https://github.com/dev-Clarisse/Meal-plan/actions/workflows/backend-ci.yml/badge.svg?branch=develop)](https://github.com/dev-Clarisse/Meal-plan/actions/workflows/backend-ci.yml)
 
-Mijoté est une application web pour organiser ses repas : un catalogue de recettes, un inventaire de ce que l'on a dans son frigo avec des alertes de péremption, et, à terme, un planning hebdomadaire et une liste de courses calculée automatiquement.
+Mijoté est une application web pour organiser ses repas : un catalogue de recettes, un inventaire de ce que l'on a dans son frigo avec des alertes de péremption, un planning hebdomadaire par glisser-déposer et une liste de courses calculée automatiquement.
 
 ## Sommaire
 
@@ -36,8 +36,9 @@ Planifier ses repas demande de jongler entre trois informations : les recettes q
 | Ingrédients | Choisir les ingrédients d'une recette dans un catalogue partagé, en tapant pour filtrer |
 | Inventaire | Suivre le contenu du frigo avec quantité, unité et date de péremption, et repérer les produits expirés ou bientôt périmés |
 | Notifications | Être prévenu des péremptions grâce à la cloche de la barre de navigation |
-| Planning | Organiser les repas de la semaine à partir de ses recettes |
-| Liste de courses | Obtenir les ingrédients à acheter, calculés à partir du planning et de l'inventaire, avec conversion entre unités compatibles (g et kg, ml et l) |
+| Planning | Organiser les repas de la semaine (7 jours × 3 repas) par glisser-déposer et calculer les ingrédients manquants |
+| Liste de courses | Obtenir les ingrédients à acheter, calculés à partir du planning et de l'inventaire (produits périmés exclus), avec conversion entre unités compatibles, et cocher les achats |
+| Génération par IA | Obtenir un brouillon de recette à relire avant de l'enregistrer |
 
 ## Aperçu de l'application
 
@@ -78,6 +79,8 @@ En développement, le serveur Angular redirige les appels `/api` vers le back su
 |   |   |-- ingredient/      catalogue d'ingrédients
 |   |   |-- recipe/          recettes et lignes d'ingrédients
 |   |   |-- common/unit/     unités et conversions
+|   |   |-- controllers/, services/, DAO/, DTO/, models/   planning et liste de courses
+|   |   |-- integration/     accès aux recettes et au stock pour le calcul des manquants
 |   |   `-- config/          sécurité et propriétés
 |   |-- src/main/resources/
 |   |   |-- db/migration/    migrations Flyway
@@ -88,10 +91,12 @@ En développement, le serveur Angular redirige les appels `/api` vers le back su
 |-- front-skeleton/
 |   `-- src/app/
 |       |-- core/            guards, intercepteurs, modèles, services
-|       |-- features/        auth, landing, recipes, inventory, notifications
+|       |-- features/        auth, landing, recipes, inventory, notifications, meal-planner
 |       `-- shared/          navbar, auth-layout, back-link, confirm-dialog, toast, directives
 |-- .github/workflows/       intégration continue
 |-- docs/previews/        aperçu animé du README
+|-- docs/demo/            script de démonstration
+|-- skills/               skill IA pour ajouter une page au front
 ```
 
    Le code front est organisé par fonctionnalité : chaque dossier regroupe les composants, services et modèles d'une même partie de l'application.
@@ -133,6 +138,10 @@ Le schéma est géré uniquement par les migrations Flyway.
 | `ingredients` | Catalogue partagé (nom, unité par défaut) |
 | `recipes` | Titre, nombre de portions, préparation |
 | `recipe_ingredients` | Lignes d'une recette (ingrédient, quantité, unité) |
+| `meal_plans` | Plan d'un utilisateur pour une semaine |
+| `meals` | Repas d'un plan (jour, type de repas, recette, portions) |
+| `shopping_lists` | Liste de courses d'un plan |
+| `shopping_items` | Articles à acheter (ingrédient, quantité, unité, acheté ou non) |
 
 Règles de conception :
 
@@ -158,18 +167,27 @@ Toutes les routes, sauf l'inscription et la connexion, exigent un jeton JWT dans
 | GET | `/api/v1/recipes` | Liste paginée (paramètres `title`, `page`, `size`) | Connecté |
 | GET | `/api/v1/recipes/{id}` | Détail d'une recette | Connecté |
 | POST | `/api/v1/recipes` | Création | Connecté |
+| POST | `/api/v1/recipes/generate` | Brouillon de recette généré par IA | Connecté |
 | PUT | `/api/v1/recipes/{id}` | Modification | Connecté |
 | DELETE | `/api/v1/recipes/{id}` | Suppression | Connecté |
 | GET, POST, PUT, DELETE | `/api/inventory/**` | Inventaire de l'utilisateur | Connecté |
-| GET, PUT | `/api/notifications/**` | Notifications de l'utilisateur | Connecté |
+| GET, POST | `/api/notifications/**` | Notifications de l'utilisateur | Connecté |
+| GET | `/api/v1/meal-plans/{semaine}` | Plan de la semaine (date au format `AAAA-MM-JJ`), créé s'il n'existe pas | Connecté |
+| POST | `/api/v1/meal-plans/{id}/meals` | Ajout d'un repas | Connecté |
+| PATCH | `/api/v1/meals/{id}/move` | Déplacement d'un repas | Connecté |
+| GET | `/api/v1/meal-plans/{id}/missing-ingredients` | Ingrédients manquants | Connecté |
+| GET, POST | `/api/v1/meal-plans/{id}/shopping-list` | Lecture et génération de la liste de courses | Connecté |
+| PATCH | `/api/v1/shopping-items/{id}` | Cocher ou décocher un article | Connecté |
 
 La taille de page des recettes est plafonnée à 50 et le tri se fait par titre.
+
+La documentation interactive est disponible sur `http://localhost:8085/swagger-ui.html` quand le back est démarré.
 
 ## Installation et lancement
 
 ### Prérequis
 
-- Java 17 ou supérieur
+- Java 17 ou 21 (avec une version plus récente, voir [Dépannage](#dépannage))
 - Maven 3.8 ou supérieur
 - Node.js 18.13 ou supérieur (20 recommandé) et npm
 - Docker et Docker Compose
@@ -197,7 +215,7 @@ Renseigner au minimum les variables suivantes dans `.env`. Le fichier `.env.samp
 | `ADMIN_EMAIL` | Adresse du compte administrateur créé au démarrage |
 | `ADMIN_PASSWORD` | Mot de passe de l'administrateur, 12 caractères minimum |
 | `DATABASE_PASSWORD` | Mot de passe de la base PostgreSQL |
-| `DATABASE_PORT` | Port de la base sur la machine (5432 par défaut) |
+| `DATABASE_PORT` | Port utilisé par le back pour joindre la base (5432, le port publié par `docker-compose.yml`) |
 | `SPRING_PROFILES_ACTIVE` | Mettre `demo` pour charger des recettes d'exemple (facultatif) |
 
 Générer un secret JWT valide :
@@ -223,6 +241,14 @@ set -a; source .env; set +a
 mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8085
 ```
 
+Sous Windows, avec PowerShell :
+
+```powershell
+cd back-skeleton
+Get-Content .env | Where-Object { $_ -match '^[A-Z_]+=' } | ForEach-Object { $k, $v = $_ -split '=', 2; Set-Item "env:$k" $v }
+mvn spring-boot:run "-Dspring-boot.run.arguments=--server.port=8085"
+```
+
 Au premier démarrage, Flyway crée le schéma et insère le catalogue d'ingrédients.
 
 ### 5. Démarrer le front
@@ -237,7 +263,16 @@ L'application est disponible sur `http://localhost:4200`.
 
 ### Données de démonstration
 
-Avec `SPRING_PROFILES_ACTIVE=demo`, le back ajoute 12 recettes d'exemple et les ingrédients associés. Ces données se trouvent dans `back-skeleton/src/main/resources/db/seed/` et ne sont jamais chargées sans ce profil, ni en production ni dans les tests.
+Avec `SPRING_PROFILES_ACTIVE=demo`, le back ajoute 12 recettes d'exemple et les ingrédients associés. Il ajoute aussi deux utilisateurs d'exemple et leur inventaire : ces comptes servent de données de test et ne permettent pas de se connecter, il faut donc créer son propre compte. Ces données se trouvent dans `back-skeleton/src/main/resources/db/seed/` et ne sont jamais chargées sans ce profil, ni en production, ni dans les tests habituels.
+
+### Essayer le scénario principal
+
+1. Créer un compte, puis ajouter à l'inventaire `Oeuf` (6 pièces), `Beurre` (200 g) et `Lait` (1 L). Le nom doit correspondre à celui du catalogue d'ingrédients : les majuscules et les accents sont ignorés, mais `Oeufs` au pluriel n'est pas reconnu.
+2. Dans Planning, ajouter Omelette nature (2 portions) et Gâteau moelleux (6 portions) : ces repas demandent 8 œufs au total.
+3. Cliquer sur « Calculer les manquants » : il manque 2 œufs.
+4. Ouvrir la liste de courses et la générer : les 2 œufs apparaissent.
+
+Le déroulé complet de la démonstration se trouve dans [docs/demo/SCRIPT_DEMO.md](docs/demo/SCRIPT_DEMO.md).
 
 Pour repartir d'une base vide :
 
@@ -256,7 +291,7 @@ cd back-skeleton
 mvn clean verify
 ```
 
-Les tests utilisent une base H2 en mémoire en mode PostgreSQL, avec les mêmes migrations Flyway. Ils couvrent les unités, les services, les contrôleurs (MockMvc avec authentification simulée) et la sécurité.
+Les tests utilisent une base H2 en mémoire en mode PostgreSQL, avec les mêmes migrations Flyway. Ils couvrent les unités, les services, les contrôleurs (MockMvc avec authentification simulée) et la sécurité. Le test d'intégration `EggScenarioIntegrationTest` vérifie le scénario principal sur la base et les services réels : 8 œufs demandés, 6 en stock, 2 à acheter, et les produits périmés ignorés.
 
 ### Front
 
@@ -311,7 +346,7 @@ Un workflow GitHub Actions (`.github/workflows/backend-ci.yml`) s'exécute sur c
 3. Ajouter une entrée dans `src/app/shared/navbar/nav-items.ts` :
 
 ```ts
-{ label: 'Planning', path: '/planning' },
+{ label: 'Favoris', path: '/favoris' },
 ```
 
 ## Utilisation de l'IA
@@ -357,12 +392,30 @@ Le skill a été validé en quatre étapes avec une IA :
 
 Un assistant de code IA a servi à guider la conception, à écrire et relire le code et les tests, et à rédiger la documentation. Toutes les contributions ont été relues, exécutées et validées par l'équipe.
 
+### Justification
+
+- **Génération de recettes** : saisir une recette est la tâche la plus longue pour l'utilisateur. Un brouillon réduit cet effort, et l'utilisateur garde la main en le relisant avant d'enregistrer. Le modèle tourne en local avec Ollama : aucune clé d'API, aucun coût à l'usage et aucune donnée envoyée à un service externe.
+- **Skill** : ajouter une page demande toujours les mêmes étapes. Les décrire dans un skill rend le résultat d'une IA de code reproductible et conforme aux conventions du projet.
+- **Assistant de code** : il a permis de brancher entre elles des parties développées séparément et de vérifier le projet de bout en bout.
+
+### Conclusions
+
+> **Brouillon à relire et à compléter par l'équipe avant le rendu, puis retirer cette ligne.**
+
+- **Un résultat qui compile n'est pas un résultat qui marche.** Une erreur sur le contenu du jeton JWT rendait l'inventaire inutilisable alors que tous les tests passaient, car ils simulaient ce jeton. Elle n'a été détectée qu'en lançant l'application réelle. Nous en retenons qu'il faut au moins un test de bout en bout, en plus des tests générés.
+- **Le contexte du projet fait la qualité de la réponse.** Les propositions sont meilleures quand l'IA s'appuie sur le code et les conventions existants, ce que le skill formalise.
+- **La responsabilité reste humaine.** La relecture croisée des pull requests a permis de repérer des problèmes que l'IA n'avait pas signalés, comme des migrations renumérotées ou des données d'exemple placées dans les migrations.
+- **Le modèle local a ses limites.** Il demande d'installer Ollama et un modèle, et ses réponses sont plus lentes et moins régulières. Elles doivent donc être validées avant enregistrement.
+
 ## Dépannage
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
 | `Migration checksum mismatch` au démarrage | Les migrations ont changé depuis la création de la base locale | `docker compose down -v`, puis relancer la base |
 | `Found more than one migration with version` | Dossier `target/` périmé | `mvn clean` ou supprimer `target/` |
+| `Java 25 (69) is not supported by the current version of Byte Buddy` pendant les tests | Version de Java trop récente pour Mockito | Utiliser Java 17 ou 21, ou lancer `mvn test "-DargLine=-Dnet.bytebuddy.experimental=true"` |
+| Le back démarre, mais les manquants ignorent un produit de l'inventaire | Le nom ne correspond pas au catalogue d'ingrédients | Utiliser le nom du catalogue, par exemple `Oeuf` et non `Oeufs` |
+| La génération de recette renvoie une erreur 502 | Ollama n'est pas démarré ou le modèle n'est pas installé | `ollama pull llama3.2:3b`, ou indiquer un modèle installé dans `OLLAMA_MODEL` |
 | `Port 8085 was already in use` | Un ancien back tourne encore | `ss -ltnp \| grep 8085`, puis arrêter le processus indiqué |
 | Variables lues avec un caractère parasite | Fins de ligne Windows dans `.env` | `sed -i 's/\r$//' .env` |
 | `No binary for Chrome browser` | Chrome absent | Installer Chromium et définir `CHROME_BIN` |
@@ -370,9 +423,6 @@ Un assistant de code IA a servi à guider la conception, à écrire et relire le
 
 ## Feuille de route
 
-- Planning hebdomadaire des repas.
-- Liste de courses calculée à partir du planning et de l'inventaire.
 - Rapprochement des articles de l'inventaire avec le catalogue d'ingrédients.
 - Unification des préfixes d'API (`/api` et `/api/v1`) et d'une liste unique d'unités.
-- Documentation OpenAPI de l'API.
-- Tests du front pour l'inventaire, l'authentification et la navigation.
+- Tests du front pour le planning et la navigation.
