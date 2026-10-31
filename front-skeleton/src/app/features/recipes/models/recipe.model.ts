@@ -37,3 +37,17 @@ export interface RecipeRequest {
   instructions: string;
   ingredients: RecipeIngredientRequest[];
 }
+
+export interface RecipeDraftLine {
+  ingredientId: number | null;
+  ingredientName: string;
+  quantity: number;
+  unit: Unit;
+}
+
+export interface RecipeDraft {
+  title: string;
+  servings: number;
+  instructions: string;
+  ingredients: RecipeDraftLine[];
+}

@@ -15,4 +15,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, UUID> {
     Optional<Inventory> findByIdAndUserId(UUID id, UUID userId);
 
     List<Inventory> findAllByExpiryDateLessThanEqual(LocalDate threshold);
+
+    void deleteByUserId(UUID userId);
 }

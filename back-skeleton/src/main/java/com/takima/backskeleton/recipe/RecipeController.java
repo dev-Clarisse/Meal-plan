@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.takima.backskeleton.recipe.dtos.GenerateRecipeRequest;
+import com.takima.backskeleton.recipe.dtos.RecipeDraftResponse;
+import com.takima.backskeleton.recipe.service.RecipeGenerationService;
+
 @RestController
 @RequestMapping("/api/v1/recipes")
 public class RecipeController {
@@ -23,9 +27,11 @@ public class RecipeController {
     private static final int MAX_PAGE_SIZE = 50;
 
     private final RecipeService recipeService;
+    private final RecipeGenerationService recipeGenerationService;
 
-    public RecipeController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService, RecipeGenerationService recipeGenerationService) {
         this.recipeService = recipeService;
+        this.recipeGenerationService=recipeGenerationService;
     }
 
     @GetMapping
@@ -57,5 +63,10 @@ public class RecipeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         recipeService.delete(id);
+    }
+
+    @PostMapping("/generate")
+    public RecipeDraftResponse generate(@Valid @RequestBody GenerateRecipeRequest request) {
+        return recipeGenerationService.generate(request);
     }
 }
