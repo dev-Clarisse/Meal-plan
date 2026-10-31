@@ -93,10 +93,10 @@ En développement, le serveur Angular redirige les appels `/api` vers le back su
 |       |-- core/            guards, intercepteurs, modèles, services
 |       |-- features/        auth, landing, recipes, inventory, notifications, meal-planner
 |       `-- shared/          navbar, auth-layout, back-link, confirm-dialog, toast, directives
+|   `-- skills/            skill IA pour ajouter une page au front
 |-- .github/workflows/       intégration continue
 |-- docs/previews/        aperçu animé du README
 |-- docs/demo/            script de démonstration
-|-- skills/               skill IA pour ajouter une page au front
 ```
 
    Le code front est organisé par fonctionnalité : chaque dossier regroupe les composants, services et modèles d'une même partie de l'application.
@@ -375,7 +375,7 @@ Les réponses du modèle sont des brouillons : l'utilisateur les relit et les mo
 
 ### Skill pour un outil de code IA
 
-Le dossier `skills/add-front-page/` contient un skill conçu avec la méthode Gechev. Il décrit à une IA de code comment ajouter une page protégée au front : dossier de feature, route avec `authGuard` et entrée dans la barre de navigation.
+Le dossier `front-skeleton/skills/add-front-page/` contient un skill conçu avec la méthode Gechev. Il décrit à une IA de code comment ajouter une page protégée au front : dossier de feature, route avec `authGuard` et entrée dans la barre de navigation.
 
 Le skill a été validé en quatre étapes avec une IA :
 
