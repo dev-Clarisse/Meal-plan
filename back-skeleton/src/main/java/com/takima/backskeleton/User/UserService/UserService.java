@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.takima.backskeleton.Inventory.DAO.InventoryRepository;
+import com.takima.backskeleton.Inventory.DAO.NotificationRepository;
 import com.takima.backskeleton.User.DAO.UserRepository;
 import com.takima.backskeleton.User.DTO.UserResponse;
 import com.takima.backskeleton.User.DTO.UserCreateRequest;
@@ -34,10 +36,15 @@ public class UserService {
     private static final int MAX_PAGE_SIZE = 100;
  
     private final UserRepository userRepository;
+    private final InventoryRepository inventoryRepository;
+    private final NotificationRepository notificationRepository;
     private final PasswordEncoder passwordEncoder;
- 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+
+    public UserService(UserRepository userRepository, InventoryRepository inventoryRepository,
+                       NotificationRepository notificationRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.notificationRepository = notificationRepository;
         this.passwordEncoder = passwordEncoder;
     }
  
@@ -106,6 +113,9 @@ public class UserService {
                 "Impossible de supprimer le dernier administrateur");
         }
  
+        // Pas de ON DELETE CASCADE sur inventory/notifications : on nettoie avant l'utilisateur.
+        notificationRepository.deleteByUserId(id);
+        inventoryRepository.deleteByUserId(id);
         userRepository.delete(user);
         log.info("Utilisateur supprimé id={}", id);
     }

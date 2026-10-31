@@ -1,6 +1,7 @@
 package com.takima.backskeleton.Inventory.InventoryService;
 
 import com.takima.backskeleton.Inventory.DAO.InventoryRepository;
+import com.takima.backskeleton.Inventory.DAO.NotificationRepository;
 import com.takima.backskeleton.Inventory.DTO.InventoryRequest;
 import com.takima.backskeleton.Inventory.DTO.InventoryResponse;
 import com.takima.backskeleton.Inventory.models.Inventory;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
 class InventoryServiceTest {
 
     @Mock InventoryRepository repo;
+    @Mock NotificationRepository notificationRepo;
     @Mock UserRepository userRepo;
 
     InventoryService service;
@@ -43,7 +45,7 @@ class InventoryServiceTest {
     @BeforeEach
     void setUp() {
         InventoryProperties props = new InventoryProperties(3);
-        service = new InventoryService(repo, userRepo, props);
+        service = new InventoryService(repo, notificationRepo, userRepo, props);
         user = new User("user@test.com", "hash", Instant.now());
         ReflectionTestUtils.setField(user, "id", userId);
     }
@@ -141,7 +143,9 @@ class InventoryServiceTest {
 
         service.delete(userId, invId);
 
-        verify(repo).delete(existing);
+        var order = inOrder(notificationRepo, repo);
+        order.verify(notificationRepo).deleteByInventoryId(invId);
+        order.verify(repo).delete(existing);
     }
 
     @Test
@@ -152,6 +156,7 @@ class InventoryServiceTest {
 
         assertThatThrownBy(() -> service.delete(userId, invId))
             .isInstanceOf(ResponseStatusException.class);
+        verify(notificationRepo, never()).deleteByInventoryId(any());
         verify(repo, never()).delete(any());
     }
 

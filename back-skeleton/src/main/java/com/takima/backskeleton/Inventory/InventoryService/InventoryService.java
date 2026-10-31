@@ -1,6 +1,7 @@
 package com.takima.backskeleton.Inventory.InventoryService;
 
 import com.takima.backskeleton.Inventory.DAO.InventoryRepository;
+import com.takima.backskeleton.Inventory.DAO.NotificationRepository;
 import com.takima.backskeleton.Inventory.DTO.InventoryRequest;
 import com.takima.backskeleton.Inventory.DTO.InventoryResponse;
 import com.takima.backskeleton.Inventory.models.Inventory;
@@ -21,11 +22,14 @@ import java.util.UUID;
 public class InventoryService {
 
     private final InventoryRepository repo;
+    private final NotificationRepository notificationRepo;
     private final UserRepository userRepo;
     private final InventoryProperties props;
 
-    public InventoryService(InventoryRepository repo, UserRepository userRepo, InventoryProperties props) {
+    public InventoryService(InventoryRepository repo, NotificationRepository notificationRepo,
+                            UserRepository userRepo, InventoryProperties props) {
         this.repo = repo;
+        this.notificationRepo = notificationRepo;
         this.userRepo = userRepo;
         this.props = props;
     }
@@ -60,6 +64,8 @@ public class InventoryService {
     public void delete(UUID userId, UUID id) {
         Inventory inv = repo.findByIdAndUserId(id, userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Inventory item not found"));
+        // Pas de ON DELETE CASCADE en base : les notifications doivent partir avant l'article.
+        notificationRepo.deleteByInventoryId(id);
         repo.delete(inv);
     }
 
