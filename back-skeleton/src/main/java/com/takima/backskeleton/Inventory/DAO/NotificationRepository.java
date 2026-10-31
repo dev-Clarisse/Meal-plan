@@ -17,4 +17,8 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     Optional<Notification> findByInventoryIdAndType(UUID inventoryId, NotificationType type);
 
     boolean existsByInventoryIdAndType(UUID inventoryId, NotificationType type);
+
+    void deleteByInventoryId(UUID inventoryId);
+
+    void deleteByUserId(UUID userId);
 }

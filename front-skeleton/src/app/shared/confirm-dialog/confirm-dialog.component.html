@@ -1,0 +1,20 @@
+<dialog #dialog class="dialog" aria-labelledby="confirm-title" (cancel)="onCancel($event)">
+  @if (confirm.options(); as options) {
+    <h2 id="confirm-title">{{ options.title }}</h2>
+    <p>{{ options.message }}</p>
+
+    <div class="actions">
+      <button type="button" class="cancel" (click)="confirm.answer(false)">
+        {{ options.cancelLabel ?? 'Annuler' }}
+      </button>
+      <button
+        type="button"
+        class="confirm"
+        [class.danger]="options.tone === 'danger'"
+        (click)="confirm.answer(true)"
+      >
+        {{ options.confirmLabel ?? 'Confirmer' }}
+      </button>
+    </div>
+  }
+</dialog>

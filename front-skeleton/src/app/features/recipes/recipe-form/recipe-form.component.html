@@ -1,0 +1,117 @@
+<section class="container form-page">
+  <app-back-link fallback="/recettes" />
+
+  <header class="head">
+    <h1>{{ recipeId === null ? 'Nouvelle recette' : 'Modifier la recette' }}</h1>
+  </header>
+
+  @if (recipeId === null) {
+    <div class="ai-box">
+      <input
+        type="text"
+        placeholder="Ex : gratin de pâtes au poulet pour 4 personnes"
+        [value]="aiPrompt()"
+        (input)="aiPrompt.set($any($event.target).value)"
+        (keyup.enter)="generate()"
+      />
+      <button type="button" (click)="generate()" [disabled]="generating()">
+        {{ generating() ? 'Génération…' : '✨ Générer avec l\'IA' }}
+      </button>
+    </div>
+  }
+
+  <p class="ai-hint">
+    💡 <strong>Conseil :</strong> Indique le plat souhaité et le nombre de personnes. Exemple : « Poulet curry coco avec du riz pour 4 personnes »<br>
+  </p>
+
+  @if (missing().length > 0) {
+    <div class="warn">
+      <strong>Ces ingrédients seront créés à l'enregistrement :</strong>
+      <ul>
+        @for (m of missing(); track m.name) {
+          <li>
+            <span class="missing-name">{{ m.name }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
+  <form class="sheet" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="row g-3">
+      <div class="col-12 col-md-9">
+        <label>
+          <span class="lbl">Titre</span>
+          <input type="text" formControlName="title" />
+        </label>
+      </div>
+      <div class="col-12 col-md-3">
+        <label>
+          <span class="lbl">Portions</span>
+          <input type="number" min="1" formControlName="servings" />
+        </label>
+      </div>
+    </div>
+
+    <label class="mt-3">
+      <span class="lbl">Préparation</span>
+      <textarea rows="5" formControlName="instructions"></textarea>
+    </label>
+
+    <h2 class="mt-4">Ingrédients</h2>
+    <datalist id="ingredient-options">
+      @for (ingredient of ingredients(); track ingredient.id) {
+        <option [value]="ingredient.name"></option>
+      }
+    </datalist>
+    <div formArrayName="ingredients" class="lines">
+      @for (line of lines.controls; track line; let i = $index) {
+        <div
+          class="line-card"
+          [class.is-ai-pending]="line.value.pendingName && line.value.ingredientId === 0"
+          [formGroupName]="i"
+        >
+          @if (line.value.pendingName && line.value.ingredientId === 0) {
+            <div class="ai-suggestion-badge">
+              <span class="sparkle">✨</span>
+              <span class="ai-label">Ingrédient suggéré par l'IA (sera créé à l'enregistrement)</span>
+            </div>
+          }
+
+          <div class="line line-fields">
+            <input
+              type="text"
+              list="ingredient-options"
+              class="select-ingredient"
+              placeholder="Choisir..."
+              [value]="ingredientName(line) || line.value.pendingName"
+              (change)="selectIngredient(line, $event)"
+            />
+
+            <input type="number" step="any" min="0" formControlName="quantity" class="input-qty" placeholder="Qté" />
+
+            <select formControlName="unit" class="select-unit">
+              @for (unit of units; track unit) {
+                <option [value]="unit">{{ unit }}</option>
+              }
+            </select>
+
+            <button type="button" class="ghost btn-remove" (click)="removeLine(i)" [disabled]="lines.length === 1">
+              Retirer
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <button type="button" class="ghost add mt-3" (click)="addLine()">+ Ajouter un ingrédient</button>
+
+    @if (error()) {
+      <p class="error mt-3">{{ error() }}</p>
+    }
+
+    <div class="actions mt-4">
+      <button type="submit" [disabled]="saving()">Enregistrer</button>
+    </div>
+  </form>
+</section>

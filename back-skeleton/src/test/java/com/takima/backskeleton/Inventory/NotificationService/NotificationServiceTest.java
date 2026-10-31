@@ -6,15 +6,14 @@ import com.takima.backskeleton.Inventory.models.Inventory;
 import com.takima.backskeleton.Inventory.models.Notification;
 import com.takima.backskeleton.Inventory.models.NotificationType;
 import com.takima.backskeleton.Inventory.models.Unit;
-import com.takima.backskeleton.User.DAO.UserRepository;
 import com.takima.backskeleton.User.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -31,19 +30,17 @@ import static org.mockito.Mockito.*;
 class NotificationServiceTest {
 
     @Mock NotificationRepository repo;
-    @Mock UserRepository userRepo;
 
     NotificationService service;
 
     UUID userId = UUID.randomUUID();
     UUID otherUserId = UUID.randomUUID();
-    String userEmail = "user@test.com";
     User user;
 
     @BeforeEach
     void setUp() {
-        service = new NotificationService(repo, userRepo);
-        user = new User(userEmail, "hash", Instant.now());
+        service = new NotificationService(repo);
+        user = new User("user@test.com", "hash", Instant.now());
         ReflectionTestUtils.setField(user, "id", userId);
     }
 
@@ -51,10 +48,9 @@ class NotificationServiceTest {
     void listForUser_shouldReturnMappedResponses() {
         Notification n = notification(user, "Lait", NotificationType.EXPIRING_SOON, "Expire bientôt");
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findAllByUserIdOrderByCreatedAtDesc(userId)).thenReturn(List.of(n));
 
-        List<NotificationResponse> result = service.listForUser(userEmail);
+        List<NotificationResponse> result = service.listForUser(userId);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).type()).isEqualTo(NotificationType.EXPIRING_SOON);
@@ -64,36 +60,44 @@ class NotificationServiceTest {
 
     @Test
     void unreadCount_shouldDelegateToRepository() {
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.countByUserIdAndReadIsFalse(userId)).thenReturn(4L);
 
-        assertThat(service.unreadCount(userEmail)).isEqualTo(4L);
+        assertThat(service.unreadCount(userId)).isEqualTo(4L);
     }
 
     @Test
     void markAsRead_shouldFlipReadFlag() {
         Notification n = notification(user, "Lait", NotificationType.EXPIRED, "Périmé");
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findById(n.getId())).thenReturn(Optional.of(n));
 
-        service.markAsRead(userEmail, n.getId());
+        service.markAsRead(userId, n.getId());
 
         assertThat(n.isRead()).isTrue();
         verify(repo).save(n);
     }
 
     @Test
-    void markAsRead_shouldThrowIfBelongsToAnotherUser() {
+    void markAsRead_shouldThrowNotFoundIfBelongsToAnotherUser() {
         User other = new User("other@test.com", "hash", Instant.now());
         ReflectionTestUtils.setField(other, "id", otherUserId);
         Notification n = notification(other, "Lait", NotificationType.EXPIRED, "Périmé");
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findById(n.getId())).thenReturn(Optional.of(n));
 
-        assertThatThrownBy(() -> service.markAsRead(userEmail, n.getId()))
-            .isInstanceOf(AccessDeniedException.class);
+        assertThatThrownBy(() -> service.markAsRead(userId, n.getId()))
+            .isInstanceOf(ResponseStatusException.class);
+        verify(repo, never()).save(any());
+    }
+
+    @Test
+    void markAsRead_shouldThrowNotFoundIfUnknown() {
+        UUID unknownId = UUID.randomUUID();
+
+        when(repo.findById(unknownId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.markAsRead(userId, unknownId))
+            .isInstanceOf(ResponseStatusException.class);
         verify(repo, never()).save(any());
     }
 
@@ -104,11 +108,10 @@ class NotificationServiceTest {
         Notification alreadyRead = notification(user, "Riz", NotificationType.EXPIRED, "msg3");
         alreadyRead.setRead(true);
 
-        when(userRepo.findByEmail(userEmail)).thenReturn(Optional.of(user));
         when(repo.findAllByUserIdOrderByCreatedAtDesc(userId))
             .thenReturn(List.of(unread1, unread2, alreadyRead));
 
-        service.markAllAsRead(userEmail);
+        service.markAllAsRead(userId);
 
         assertThat(unread1.isRead()).isTrue();
         assertThat(unread2.isRead()).isTrue();

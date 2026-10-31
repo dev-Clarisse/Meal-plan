@@ -55,8 +55,6 @@ describe('NotificationBellComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  
-
   it('should load notifications and unread count on init', () => {
     expect(notifServiceSpy.list).toHaveBeenCalled();
     expect(notifServiceSpy.unreadCount).toHaveBeenCalled();
@@ -67,7 +65,8 @@ describe('NotificationBellComponent', () => {
   it('should display the bell icon', () => {
     const btn = fixture.nativeElement.querySelector('.bell-btn');
     expect(btn).toBeTruthy();
-    expect(btn.textContent).toContain('🔔');
+    const icon = btn.querySelector('i.bi-bell');
+    expect(icon).toBeTruthy();
   });
 
   it('should display the unread badge when count > 0', () => {
@@ -82,8 +81,6 @@ describe('NotificationBellComponent', () => {
     const badge = fixture.nativeElement.querySelector('.badge-count');
     expect(badge).toBeFalsy();
   });
-
- 
 
   it('should start with the panel closed', () => {
     expect(component.open()).toBeFalse();
@@ -102,8 +99,6 @@ describe('NotificationBellComponent', () => {
     fixture.detectChanges();
     expect(component.open()).toBeFalse();
   });
-
-  
 
   it('should display all notifications when open', () => {
     component.toggle();
@@ -131,8 +126,6 @@ describe('NotificationBellComponent', () => {
 
     expect(fixture.nativeElement.textContent).toContain('Aucune notification');
   });
-
- 
 
   it('should mark a notification as read on click', () => {
     component.markRead(mockNotifs[0]);
@@ -170,10 +163,7 @@ describe('NotificationBellComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Tout lire');
   });
 
-  
-
   it('should refresh notifications periodically', fakeAsync(() => {
-    
     const newFixture = TestBed.createComponent(NotificationBellComponent);
     newFixture.detectChanges();
 
@@ -185,7 +175,6 @@ describe('NotificationBellComponent', () => {
     expect(notifServiceSpy.list).toHaveBeenCalled();
     expect(notifServiceSpy.unreadCount).toHaveBeenCalled();
 
-   
     newFixture.destroy();
     discardPeriodicTasks();
   }));

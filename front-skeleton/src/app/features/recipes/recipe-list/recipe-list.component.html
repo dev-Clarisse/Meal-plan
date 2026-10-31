@@ -1,0 +1,64 @@
+<header class="banner">
+  <div class="banner-inner container">
+    <h1>Recettes</h1>
+  </div>
+
+  <div class="search container">
+    <div class="search-bar">
+      <input
+        type="search"
+        name="title"
+        placeholder="Rechercher une recette..."
+        [(ngModel)]="title"
+        (keyup.enter)="onSearch()"
+      />
+      <button type="button" (click)="onSearch()">Rechercher</button>
+    </div>
+  </div>
+</header>
+
+<section class="container recipes">
+  <div class="toolbar">
+    <span class="count">{{ totalElements() }} recette(s)</span>
+    <a class="btn-bistro" routerLink="/recettes/nouvelle">+ Nouvelle recette</a>
+  </div>
+
+  @if (loading()) {
+    <p class="state">Chargement...</p>
+  } @else if (error()) {
+    <p class="state error">{{ error() }}</p>
+  } @else if (recipes().length === 0) {
+    <p class="state">Aucune recette trouvée.</p>
+  } @else {
+    <div class="row g-4">
+      @for (recipe of recipes(); track recipe.id) {
+        <div class="col-12 col-md-6 col-lg-4">
+          <a class="recipe-card" [routerLink]="['/recettes', recipe.id]">
+            <div class="meta">
+              <span><i class="bi bi-people" aria-hidden="true"></i> {{ recipe.servings }} portion(s)</span>
+              <span>{{ recipe.ingredients.length }} ingrédient(s)</span>
+            </div>
+            <h2>{{ recipe.title }}</h2>
+            <ul>
+              @for (line of recipe.ingredients.slice(0, 3); track line.ingredientId) {
+                <li>
+                  <span class="qty">{{ line.quantity }} {{ line.unit }}</span>
+                  {{ line.ingredientName }}
+                </li>
+              }
+            </ul>
+            @if (recipe.ingredients.length > 3) {
+              <p class="more">+ {{ recipe.ingredients.length - 3 }} autres</p>
+            }
+          </a>
+        </div>
+      }
+    </div>
+
+    <div class="pager">
+      <button type="button" (click)="goTo(page() - 1)" [disabled]="page() === 0">Précédent</button>
+      <span>Page {{ page() + 1 }} / {{ totalPages() }}</span>
+      <button type="button" (click)="goTo(page() + 1)" [disabled]="page() + 1 >= totalPages()">Suivant</button>
+    </div>
+  }
+</section>

@@ -10,7 +10,7 @@ import { Notification } from '../../core/models/notification.model';
   template: `
     <div class="bell-wrapper">
       <button class="btn bell-btn" (click)="toggle()">
-        🔔
+        <i class="bi bi-bell" aria-hidden="true"></i>
         @if (unread() > 0) {
           <span class="badge-count">{{ unread() }}</span>
         }

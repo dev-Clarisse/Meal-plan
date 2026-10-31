@@ -8,12 +8,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,9 +29,11 @@ class NotificationControllerTest {
     @Autowired MockMvc mockMvc;
 
     @MockBean NotificationService service;
-    @MockBean UserRepository userRepository;   // requis par UserJwtAuthenticationConverter
+    @MockBean UserRepository userRepository;
 
-    private static final String EMAIL = "user@test.com";
+   
+    private static final UUID USER_ID = UUID.randomUUID();
+    private static final String SUBJECT = USER_ID.toString();
 
     @Test
     void list_shouldReturnNotifications() throws Exception {
@@ -37,10 +42,10 @@ class NotificationControllerTest {
             NotificationType.EXPIRING_SOON, "Le produit Lait expire bientôt",
             false, Instant.now()
         );
-        when(service.listForUser(EMAIL)).thenReturn(List.of(resp));
+        when(service.listForUser(USER_ID)).thenReturn(List.of(resp));
 
         mockMvc.perform(get("/api/notifications")
-                .with(jwt().jwt(j -> j.subject(EMAIL))))
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].inventoryName").value("Lait"))
             .andExpect(jsonPath("$[0].type").value("EXPIRING_SOON"))
@@ -49,10 +54,10 @@ class NotificationControllerTest {
 
     @Test
     void unreadCount_shouldReturnCount() throws Exception {
-        when(service.unreadCount(EMAIL)).thenReturn(3L);
+        when(service.unreadCount(USER_ID)).thenReturn(3L);
 
         mockMvc.perform(get("/api/notifications/unread-count")
-                .with(jwt().jwt(j -> j.subject(EMAIL))))
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.count").value(3));
     }
@@ -62,14 +67,25 @@ class NotificationControllerTest {
         UUID notifId = UUID.randomUUID();
 
         mockMvc.perform(post("/api/notifications/{id}/read", notifId)
-                .with(jwt().jwt(j -> j.subject(EMAIL))))
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void markAsRead_shouldReturn404WhenNotFoundOrNotOwned() throws Exception {
+        UUID notifId = UUID.randomUUID();
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Notification not found"))
+            .when(service).markAsRead(USER_ID, notifId);
+
+        mockMvc.perform(post("/api/notifications/{id}/read", notifId)
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
+            .andExpect(status().isNotFound());
     }
 
     @Test
     void markAllAsRead_shouldReturn200() throws Exception {
         mockMvc.perform(post("/api/notifications/read-all")
-                .with(jwt().jwt(j -> j.subject(EMAIL))))
+                .with(jwt().jwt(j -> j.subject(SUBJECT))))
             .andExpect(status().isOk());
     }
 

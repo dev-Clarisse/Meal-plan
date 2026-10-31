@@ -1,0 +1,41 @@
+@use '../planner-page' as page;
+
+@include page.planner-page('/assets/banner-courses.jpg');
+
+.toolbar .btn-bistro {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.result-card li {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.slot-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--terracotta);
+}
+
+.meal-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--olive);
+}
+
+.servings {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
