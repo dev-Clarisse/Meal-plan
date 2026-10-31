@@ -361,7 +361,7 @@ Le formulaire de recette peut proposer un brouillon généré par un modèle de 
 |---|---|---|
 | `OLLAMA_URL` | `http://localhost:11434` | Adresse du serveur Ollama |
 | `OLLAMA_MODEL` | `llama3.2:3b` | Modèle utilisé |
-| `OLLAMA_TIMEOUT` | `120` | Délai maximal en secondes |
+| `OLLAMA_TIMEOUT` | `300` | Délai maximal en secondes (sans carte graphique, une génération peut prendre plusieurs minutes) |
 
 Installation locale :
 
